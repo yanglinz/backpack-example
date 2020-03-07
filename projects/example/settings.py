@@ -55,11 +55,6 @@ TEMPLATES = [
     }
 ]
 
-INTERNAL_IPS = []
-if DEBUG:
-    # This is required for django debug tool bar to be shown
-    INTERNAL_IPS = ["127.0.0.1"]
-
 # Static files
 # Django static file configs
 
