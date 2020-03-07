@@ -1,0 +1,20 @@
+{
+  "name": "backpack-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "true",
+    "start": "true",
+    "format": "prettier --write './**/*.{js,css,md,yml}'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "prettier": "^1.19.1"
+  },
+  "volta": {
+    "node": "12.15.0",
+    "yarn": "1.22.0"
+  }
+}
