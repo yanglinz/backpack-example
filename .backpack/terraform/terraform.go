@@ -3,6 +3,7 @@ package terraform
 import (
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/rodaine/hclencoder"
 	"github.com/yanglinz/backpack/internal"
@@ -61,13 +62,14 @@ func getCloudrunConfig(backpack internal.Context) autoconfig {
 		},
 	}
 
+	project := backpack.Projects[0]
 	modules := []webModule{
 		webModule{
 			ID:                   "app_web",
 			Source:               "../.backpack/terraform/web-django-module",
 			ContextName:          "${var.context_name}",
 			ProjectName:          "core",
-			DjangoSettingsModule: "projects.core.settings",
+			DjangoSettingsModule: strings.ReplaceAll(project.Path, "/", ".") + ".settings",
 			ImageTag:             "${var.image_tag}",
 			GCPProject:           backpack.Google.ProjectID,
 		},
