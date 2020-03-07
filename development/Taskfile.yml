@@ -1,0 +1,12 @@
+version: 2
+
+tasks:
+  server:
+    silent: true
+    cmds:
+      - docker-compose up
+
+  ui:
+    silent: true
+    cmds:
+      - yarn start
