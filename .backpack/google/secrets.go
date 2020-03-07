@@ -28,7 +28,7 @@ func bucketExists(bucketName string) bool {
 
 func bootstrapServiceAccount(backpack internal.Context) {
 	// Create service account to fetch secrets
-	serviceAccountName := "cloudrun-berglas-" + backpack.Name
+	serviceAccountName := "berglas-" + backpack.Name
 	parts := []string{
 		"gcloud iam service-accounts create",
 		serviceAccountName,
