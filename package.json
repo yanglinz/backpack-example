@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "true",
+    "build": "mkdir build && touch build/index.html",
     "start": "true",
     "format": "prettier --write './**/*.{js,css,md,yml}'"
   },
