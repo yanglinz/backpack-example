@@ -6,6 +6,8 @@ etc/certs
 etc/development.json
 etc/production.json
 static-django/
+*.tfstate
+*.tfstate.backup
 
 # Javascript
 node_modules/
