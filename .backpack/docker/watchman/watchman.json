@@ -1,0 +1,4 @@
+{
+  "root_files": ["Pipfile.lock"],
+  "ignore_dirs": ["node_modules", "build"]
+}
