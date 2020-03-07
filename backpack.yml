@@ -2,7 +2,7 @@ version: 1
 
 name: backpack-example
 
-runtime: CLOUDRUN
+runtime: CLOUD_RUN
 
 projects:
   - name: example
