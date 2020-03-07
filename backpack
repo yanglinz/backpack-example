@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+PROJECT_ROOT="$(pwd)"
+
+cd .backpack && go run main.go "$@" --root "$PROJECT_ROOT"

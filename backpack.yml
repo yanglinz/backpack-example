@@ -1,0 +1,9 @@
+version: 1
+
+name: backpack-example
+
+runtime: CLOUDRUN
+
+projects:
+  - name: example
+    path: projects/example

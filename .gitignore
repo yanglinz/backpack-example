@@ -1,0 +1,29 @@
+# Application
+.terraform/
+*.tfstate
+bin/task
+etc/certs
+etc/development.json
+etc/production.json
+static-django/
+
+# Javascript
+node_modules/
+build/
+
+# Python
+*.pyc
+staticfiles
+.env
+*.sqlite3
+
+# Build
+dist/
+.cache/
+
+# Shared volumes
+var/
+
+# Logs
+*.log
+*.pid
