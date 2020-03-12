@@ -11,3 +11,15 @@ functions as CLI tool that ties together bash scripts and configuration files.
 > setup. People may not be able to use it directly, but I did want to open
 > source it because the pattern of embedding a set of configuration as a
 > packaged tool has worked for me very well over time.
+
+## Features
+
+Backpack takes care of generating configurations for:
+
+- Local development via [Docker](https://www.docker.com/).
+- Continuous integration via
+  [Github Actions](https://github.com/features/actions).
+- Infrastructure as code via [Terraform](https://www.terraform.io/).
+- Serverless runtime via [Google Cloud Run](https://cloud.google.com/run).
+- Secret management via
+  [Berglas](https://github.com/GoogleCloudPlatform/berglas).
