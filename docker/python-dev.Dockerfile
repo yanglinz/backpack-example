@@ -42,9 +42,6 @@ COPY scripts/docker /app/scripts/docker
 COPY .backpack/docker/scripts/install-extra-deps.sh /tmp/
 RUN /tmp/install-extra-deps.sh
 
-# TODO: create hooks for installing extra deps
-RUN pipenv run pyppeteer-install
-
 # Copy configurations
 COPY .backpack/docker/watchman/watchman.json /etc/
 COPY .backpack/docker/supervisord/supervisord-dev.conf /etc/supervisord.conf
