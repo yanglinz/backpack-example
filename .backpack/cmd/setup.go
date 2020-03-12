@@ -35,6 +35,11 @@ var setupCmd = &cobra.Command{
 			github.CreateWorkflows(backpack)
 			docker.CreateComposeConfig(backpack)
 			terraform.CreateConfig(backpack)
+
+			err := terraform.ValidateBackend(backpack)
+			if err != nil {
+				panic(err)
+			}
 		}
 		if setupResources {
 			google.BootstrapSecrets(backpack)

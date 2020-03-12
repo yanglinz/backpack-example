@@ -1,6 +1,7 @@
 package terraform
 
 import (
+	"errors"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -107,4 +108,14 @@ func CreateConfig(backpack internal.Context) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// ValidateBackend checks whether backend.tf has been setup
+func ValidateBackend(backpack internal.Context) error {
+	backend := filepath.Join(backpack.Root, "terraform/backend.tf")
+	if internal.Exists(backend) {
+		return nil
+	}
+
+	return errors.New("Missing terraform/backend.tf")
 }
