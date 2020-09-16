@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"path/filepath"
-	"strings"
 
 	"github.com/rodaine/hclencoder"
 	"github.com/yanglinz/backpack/internal"
@@ -41,45 +40,8 @@ type autoconfig struct {
 }
 
 func getCloudrunConfig(backpack internal.Context) autoconfig {
-	providers := []gcpProvider{
-		gcpProvider{
-			ID:      "google",
-			Project: backpack.Google.ProjectID,
-			Region:  backpack.Google.Region,
-			Zone:    backpack.Google.Zone,
-		},
-	}
-
-	variables := []variable{
-		variable{
-			ID:      "context_name",
-			Type:    "string",
-			Default: backpack.Name,
-		},
-		variable{
-			ID:      "image_tag",
-			Type:    "string",
-			Default: "latest",
-		},
-	}
-
-	project := backpack.Projects[0]
-	modules := []webModule{
-		webModule{
-			ID:                   "app_web",
-			Source:               "../.backpack/terraform/web-django-module",
-			ContextName:          "${var.context_name}",
-			ProjectName:          "core",
-			DjangoSettingsModule: strings.ReplaceAll(project.Path, "/", ".") + ".settings",
-			ImageTag:             "${var.image_tag}",
-			GCPProject:           backpack.Google.ProjectID,
-		},
-	}
-
 	config := autoconfig{
-		Providers: providers,
-		Variables: variables,
-		Modules:   modules,
+		Variables: nil,
 	}
 	return config
 }
