@@ -1,0 +1,11 @@
+name: Infrastructure
+
+on: [push]
+
+jobs:
+  # Build the cli and test project setup
+  backpack_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: echo Hello!
