@@ -1,6 +1,6 @@
 name: Infrastructure
 
-on: [push]
+on: [workflow_dispatch]
 
 jobs:
   # Build the cli and test project setup
