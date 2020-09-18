@@ -1,0 +1,7 @@
+- name: DigitalOcean bootstrapper
+  hosts: all
+  tasks:
+    - name: Empty task
+      copy:
+        content: Hello world!
+        dest: /tmp/test.txt
