@@ -12,5 +12,5 @@ jobs:
       - run: mkdir -p .backpack/etc/ansible
       - run: echo "198.199.83.49" > .backpack/etc/ansible/hosts
       - run: echo "${{ secrets.DEPLOY_KEY }}" > .backpack/etc/ssh/id_rsa
-      - run: apt-add-repository ppa:ansible/ansible && apt update && apt install ansible
+      - run: sudo apt-add-repository ppa:ansible/ansible && sudo apt update && sudo apt install ansible
       - run: ansible --help
