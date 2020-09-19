@@ -8,4 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - run: echo Hello!
+      - run: mkdir -p .backpack/etc/ssh
+      - run: mkdir -p .backpack/etc/ansible
+      - run: echo "198.199.83.49" > .backpack/etc/ansible/hosts
+      - run: echo "${{ secrets.DEPLOY_KEY }}" > .backpack/etc/ssh/id_rsa
