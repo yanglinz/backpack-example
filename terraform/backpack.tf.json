@@ -1,0 +1,14 @@
+{
+  "module": [
+    {
+      "backpack_example_web": [
+        {
+          "app_context": {
+            "app_name": "backpack-example"
+          },
+          "source": "../.backpack/terraform/core-web-digitalocean"
+        }
+      ]
+    }
+  ]
+}
