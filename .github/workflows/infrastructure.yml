@@ -1,10 +1,10 @@
 name: Infrastructure
 
-on: [workflow_dispatch]
+# on: [workflow_dispatch]
+on: [push]
 
 jobs:
-  # Build the cli and test project setup
-  backpack_build:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -12,3 +12,5 @@ jobs:
       - run: mkdir -p .backpack/etc/ansible
       - run: echo "198.199.83.49" > .backpack/etc/ansible/hosts
       - run: echo "${{ secrets.DEPLOY_KEY }}" > .backpack/etc/ssh/id_rsa
+      - run: apt-add-repository ppa:ansible/ansible && apt update && apt install ansible
+      - run: ansible --help
