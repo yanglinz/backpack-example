@@ -13,10 +13,10 @@ jobs:
       - run: mkdir -p ~/.ssh
       - run: ssh-keyscan -H 198.199.83.49 >> ~/.ssh/known_hosts
       - run: echo "198.199.83.49" > .backpack/etc/ansible/hosts
-      - run: echo "${{ secrets.DEPLOY_KEY }}" > ~/ssh/id_rsa
+      - run: echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
       - run: ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
-      - run: sudo chmod 600 .backpack/etc/ssh/id_rsa
-      - run: sudo chmod 600 .backpack/etc/ssh/id_rsa.pub
+      - run: sudo chmod 600 ~/.ssh/id_rsa
+      - run: sudo chmod 600 ~/.ssh/id_rsa.pub
       - run: sudo apt-add-repository ppa:ansible/ansible && sudo apt update && sudo apt install ansible
       - run: ansible --help
       - run: |
