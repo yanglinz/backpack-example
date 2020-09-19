@@ -6,6 +6,7 @@ etc/certs
 etc/development.json
 etc/production.json
 static-django/
+*secrets.tfvars
 *.tfstate
 *.tfstate.backup
 

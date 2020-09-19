@@ -65,10 +65,18 @@ func CreateConfig(backpack internal.Context) {
 		panic(err)
 	}
 
+	// Create main configuration file
 	configPath := filepath.Join(backpack.Root, "terraform/backpack.tf")
 	err = ioutil.WriteFile(configPath, hcl, 0644)
 	if err != nil {
 		panic(err)
+	}
+
+	// Copy secret variable file
+	secretsPath := filepath.Join(backpack.Root, "terraform/secrets.tfvars")
+	if !internal.Exists(secretsPath) {
+		sourcePath := filepath.Join(backpack.Root, ".backpack/terraform/root/secrets.tfvars")
+		internal.CopyFile(sourcePath, secretsPath)
 	}
 }
 
