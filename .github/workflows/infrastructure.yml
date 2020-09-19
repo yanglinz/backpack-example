@@ -14,3 +14,8 @@ jobs:
       - run: echo "${{ secrets.DEPLOY_KEY }}" > .backpack/etc/ssh/id_rsa
       - run: sudo apt-add-repository ppa:ansible/ansible && sudo apt update && sudo apt install ansible
       - run: ansible --help
+      - run: |
+          ansible-playbook .backpack/digitalocean/bootstrap/playbook.yml \
+            -i .backpack/etc/ansible/hosts \
+            --key-file .backpack/etc/ssh/id_rsa \
+            -u root
