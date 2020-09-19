@@ -10,6 +10,7 @@ jobs:
       - uses: actions/checkout@v1
       - run: mkdir -p .backpack/etc/ssh
       - run: mkdir -p .backpack/etc/ansible
+      - run: mkdir -p ~/.ssh
       - run: ssh-keyscan -H 198.199.83.49 >> ~/.ssh/known_hosts
       - run: echo "198.199.83.49" > .backpack/etc/ansible/hosts
       - run: echo "${{ secrets.DEPLOY_KEY }}" > .backpack/etc/ssh/id_rsa
