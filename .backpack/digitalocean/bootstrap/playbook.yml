@@ -5,3 +5,8 @@
       copy:
         content: Hello world!
         dest: /tmp/test.txt
+    - name: Testing
+      command: ls -la
+      register: hello
+
+    - debug: msg="{{ hello.stdout }}"
