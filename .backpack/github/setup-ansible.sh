@@ -6,7 +6,10 @@ IFS=$'\n\t'
 sudo apt-add-repository ppa:ansible/ansible
 sudo apt update && sudo apt install ansible
 
-instance_ip=$(cat /tmp/terraform-output.json | jq -r '.ip_address.value')
+# instance_ip=$(cat /tmp/terraform-output.json | jq -r '.ip_address.value')
+instance_ip="198.199.83.49"
+
+echo "$instance_ip"
 
 # Setup ansible hosts inventory
 mkdir -p ~/.ssh
