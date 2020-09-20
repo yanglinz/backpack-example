@@ -32,6 +32,5 @@ jobs:
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
       - run: |
           ansible-playbook .backpack/digitalocean/bootstrap/playbook.yml \
-            --private-key ./etc/ssh/id_rsa \
             --inventory ./etc/ansible/hosts \
             --user root
