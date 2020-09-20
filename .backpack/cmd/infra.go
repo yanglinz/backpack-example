@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
@@ -15,7 +14,6 @@ var terraformPlanCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		backpack := internal.ParseContext(cmd)
-
 		terraformDir := filepath.Join(backpack.Root, "terraform")
 
 		// Run terraform init
@@ -43,7 +41,15 @@ var terraformApplyCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		backpack := internal.ParseContext(cmd)
-		fmt.Println(backpack)
+		terraformDir := filepath.Join(backpack.Root, "terraform")
+
+		// Run terraform apply
+		shell := internal.GetCommand("terraform apply -var-file=secrets.tfvars")
+		shell.Dir = terraformDir
+		err := shell.Run()
+		if err != nil {
+			panic(err)
+		}
 	},
 }
 
