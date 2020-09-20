@@ -61,19 +61,3 @@ jobs:
       - run: .backpack/github/build-release.sh
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
-  # Run terraform plan
-  terraform_plan:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master-disabled'
-    steps:
-      - uses: actions/checkout@v1
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          version: "270.0.0"
-          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-      - run: .backpack/github/install-terraform.sh
-      - run: .backpack/github/terraform-plan.sh
-        env:
-          TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
-          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}

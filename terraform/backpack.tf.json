@@ -10,5 +10,14 @@
         }
       ]
     }
+  ],
+  "output": [
+    {
+      "ip_address": [
+        {
+          "value": "${module.backpack_example_web.ip_address}"
+        }
+      ]
+    }
   ]
 }
