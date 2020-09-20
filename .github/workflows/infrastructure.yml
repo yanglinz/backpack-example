@@ -1,13 +1,12 @@
 name: Infrastructure
 
 # on: [workflow_dispatch]
-on: [workflow_dispatch]
+on: [push]
 
 jobs:
   # Run terraform plan
   terraform_plan:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master-disabled'
     steps:
       - uses: actions/checkout@v1
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -15,10 +14,10 @@ jobs:
           version: "270.0.0"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
       - run: .backpack/github/install-terraform.sh
-      - run: .backpack/github/terraform-plan.sh
-        env:
-          TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
-          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      # - run: .backpack/github/terraform-plan.sh
+      #   env:
+      #     TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+      #     GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
   
   # Run ansible on server
   ansible:
