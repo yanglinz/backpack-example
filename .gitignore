@@ -1,11 +1,13 @@
 # Application
-.terraform/
-*.tfstate
 bin/task
 etc/certs
 etc/development.json
 etc/production.json
+etc/ansible/hosts
 static-django/
+
+# Terraform
+.terraform/
 *secrets.tfvars
 *.tfstate
 *.tfstate.backup

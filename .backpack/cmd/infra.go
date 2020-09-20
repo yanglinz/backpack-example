@@ -50,6 +50,15 @@ var terraformApplyCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+
+		// Get output
+		// TODO: Create Ansible inventory from this output
+		shell = internal.GetCommand("terraform output")
+		shell.Dir = terraformDir
+		err = shell.Run()
+		if err != nil {
+			panic(err)
+		}
 	},
 }
 

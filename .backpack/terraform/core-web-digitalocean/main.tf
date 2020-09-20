@@ -9,3 +9,7 @@ resource "digitalocean_floating_ip" "web" {
   droplet_id = digitalocean_droplet.web.id
   region     = digitalocean_droplet.web.region
 }
+
+output "ip_address" {
+  value = digitalocean_floating_ip.web.ip_address
+}
