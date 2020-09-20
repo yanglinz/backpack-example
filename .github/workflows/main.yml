@@ -1,7 +1,6 @@
 name: Main
 
-# on: [push]
-on: [release]
+on: [push]
 
 env:
   APP_NAME: backpack-example
