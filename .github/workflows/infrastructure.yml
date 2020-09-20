@@ -4,11 +4,12 @@ name: Infrastructure
 on: [push]
 
 jobs:
-  # Run terraform plan
-  terraform_plan:
+  provision:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+
+      # Run terraform plan
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: "270.0.0"
@@ -19,13 +20,14 @@ jobs:
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
           TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-  
-  # Run ansible on server
-  ansible:
-    needs: terraform_plan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
+      - run: .backpack/github/terraform-apply.sh
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      # Run ansible on server
+      - run: cat /tmp/terraform-output.json
       - run: mkdir -p .backpack/etc/ssh
       - run: mkdir -p .backpack/etc/ansible
       - run: mkdir -p ~/.ssh
