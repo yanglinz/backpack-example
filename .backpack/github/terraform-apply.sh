@@ -7,6 +7,6 @@ export GCLOUD_KEYFILE_JSON="/tmp/service-account.json"
 
 cd terraform
 terraform init -backend-config="token=${TERRAFORM_CLOUD_TOKEN}"
-terraform apply -auto-approve
+terraform apply -var="digitalocean_token=${DIGITALOCEAN_TOKEN}" -auto-approve
 terraform output -json > /tmp/terraform-output.json
 cd -
