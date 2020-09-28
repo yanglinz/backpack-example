@@ -8,8 +8,9 @@ env:
   GCP_PROJECT_ID: default-263000
 
 jobs:
-  provision:
+  deploy:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
 
