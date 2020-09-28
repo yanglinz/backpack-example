@@ -8,9 +8,9 @@ PROJECT_ROOT = path.dirname(path.abspath(__file__))
 # Base settings
 # Some core Django settings
 
-DEBUG = os.environ["DEBUG"] == "true"
+DEBUG = os.environ.get("DEBUG") == "true"
 
-SECRET_KEY = os.environ["SECRET_KEY"]
+SECRET_KEY = os.environ.get("SECRET_KEY") or "insecure"
 
 ALLOWED_HOSTS = ["*"]
 
