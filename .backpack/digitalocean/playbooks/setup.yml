@@ -7,4 +7,4 @@
         dest: /opt/backpack-app
         recursive: yes
     - name: Run Dokku Setup
-      
+      script: "{{ playbook_dir }}/../dokku-installer.sh"
