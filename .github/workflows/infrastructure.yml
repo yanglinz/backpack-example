@@ -30,6 +30,6 @@ jobs:
         env: 
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
       - run: |
-          ansible-playbook .backpack/digitalocean/bootstrap/playbook.yml \
+          ansible-playbook .backpack/digitalocean/playbooks/setup.yml \
             --inventory ./etc/ansible/hosts \
             --user root
