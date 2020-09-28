@@ -1,0 +1,10 @@
+- name: DigitalOcean Bootstrapper
+  hosts: all
+  tasks:
+    - name: Copy Backpack Directory
+      synchronize:
+        src: "{{ playbook_dir }}/../../.."
+        dest: /opt/backpack-app
+        recursive: yes
+    - name: Run Dokku Setup
+      
