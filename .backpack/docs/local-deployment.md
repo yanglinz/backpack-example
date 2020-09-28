@@ -10,5 +10,5 @@ Deploying an aplication to dokku locally.
 
 ```sh
 git remote add dokku dokku@11.22.33.44:app-name
-GIT_SSH_COMMAND="ssh -i /path/to/ssh/key -l dokku" git push dokku master
+GIT_SSH_COMMAND="ssh -i /path/to/ssh/key -l dokku" git push dokku master -f
 ```
