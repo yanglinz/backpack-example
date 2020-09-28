@@ -1,6 +1,6 @@
-name: Infrastructure
+name: Deployment
 
-on: [workflow_dispatch]
+on: [push]
 
 env:
   APP_NAME: backpack-example
@@ -30,11 +30,7 @@ jobs:
           TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      # Run ansible on server
-      - run: .backpack/github/setup-ansible.sh
+      # Run deployment script
+      - run: .backpack/github/deploy.sh
         env: 
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
-      - run: |
-          ansible-playbook .backpack/digitalocean/playbooks/setup.yml \
-            --inventory ./etc/ansible/hosts \
-            --user root
