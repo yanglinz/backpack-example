@@ -11,6 +11,7 @@ jobs:
   # Build the cli and test project setup
   backpack_build:
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/master'
     steps:
       - uses: actions/setup-go@v1
         with:
@@ -21,6 +22,7 @@ jobs:
   # Build and test frontend JS and CSS assets
   frontend_build:
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
       - id: yarn-cache
@@ -41,12 +43,14 @@ jobs:
   # Build and test backend python
   server_build:
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
 
   # Build and publish docker artifact
   release_build:
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/master'
     needs: frontend_build
     steps:
       - uses: actions/checkout@v1
