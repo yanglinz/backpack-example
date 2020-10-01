@@ -12,6 +12,7 @@ import (
 )
 
 const namespacePrefix = "backpack-berglas-"
+const namespacePrefixShort = "backpack-"
 const secretName = "BACKPACK_VARS_JSON"
 const secretNameDev = "BACKPACK_VARS_DEV_JSON"
 
@@ -59,7 +60,7 @@ func bootstrapBucket(backpack internal.Context) {
 
 func bootstrapServiceAccount(backpack internal.Context) {
 	// Create service account to fetch secrets
-	serviceAccountName := namespacePrefix + backpack.Name
+	serviceAccountName := namespacePrefixShort + backpack.Name
 	parts := []string{
 		"gcloud iam service-accounts create",
 		serviceAccountName,
