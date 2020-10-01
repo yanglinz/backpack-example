@@ -17,7 +17,7 @@ jobs:
       # Run terraform plan
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          version: "270.0.0"
+          version: "290.0.1"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
       - run: .backpack/github/install-terraform.sh
       - run: .backpack/github/terraform-plan.sh
@@ -35,3 +35,18 @@ jobs:
       - run: .backpack/github/deploy.sh
         env: 
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
+
+  set_secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.13.8
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "290.0.1"
+          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          export_default_credentials: true
+      - run: .backpack/github/install-berglas.sh
+      - run: ./backpack vars get

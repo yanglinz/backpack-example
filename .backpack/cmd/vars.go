@@ -8,21 +8,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yanglinz/backpack/google"
-	"github.com/yanglinz/backpack/heroku"
 	"github.com/yanglinz/backpack/internal"
 	"github.com/yanglinz/backpack/symbols"
 )
-
-var varsContextCmd = &cobra.Command{
-	Use:   "context",
-	Short: "Output current context info",
-	Long:  "Output current context info",
-	Args:  cobra.ExactArgs(0),
-	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
-		google.ListSecrets(backpack)
-	},
-}
 
 var varsGetCmd = &cobra.Command{
 	Use:   "get",
@@ -32,12 +20,7 @@ var varsGetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
 		backpack := internal.ParseContext(cmd)
-
-		secretKey := "BERGLAS_APP_DEV_JSON"
-		if env == symbols.EnvProduction {
-			secretKey = "BERGLAS_APP_JSON"
-		}
-		secret := google.GetSecret(backpack, secretKey)
+		secret := google.GetSecrets(backpack, env)
 
 		var envJSON map[string]string
 		json.Unmarshal([]byte(secret), &envJSON)
@@ -59,13 +42,10 @@ var varsPutCmd = &cobra.Command{
 		env, _ := cmd.Flags().GetString("env")
 		backpack := internal.ParseContext(cmd)
 
-		secretKey := "BERGLAS_APP_DEV_JSON"
 		envFile := filepath.Join(backpack.Root, "etc/development.json")
 		if env == symbols.EnvProduction {
-			secretKey = "BERGLAS_APP_JSON"
 			envFile = filepath.Join(backpack.Root, "etc/production.json")
 		}
-
 		envData, err := ioutil.ReadFile(envFile)
 		if err != nil {
 			panic(err)
@@ -78,61 +58,10 @@ var varsPutCmd = &cobra.Command{
 			panic(err)
 		}
 
-		if backpack.Runtime == symbols.RuntimeHeroku {
-			for k, v := range envJSON {
-				heroku.PutSecret(heroku.PutSecretRequest{
-					App:   backpack.Heroku.AppName,
-					Name:  k,
-					Value: v,
-				})
-			}
-		}
-
-		if backpack.Runtime == symbols.RuntimeCloudrun {
-			google.UpdateSecret(backpack, google.UpdateSecretRequest{
-				Name:  secretKey,
-				Value: string(formattedJSON),
-			})
-		}
-	},
-}
-
-var varsInternalNewCmd = &cobra.Command{
-	Use:   "_new",
-	Short: "Create a new variable by name",
-	Long:  "Create a new variable by name",
-	Args:  cobra.ExactArgs(2),
-	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
-		google.CreateSecret(backpack, google.CreateSecretRequest{
-			Name:  args[0],
-			Value: args[1],
+		google.UpdateSecrets(backpack, google.UpdateSecretRequest{
+			Env:   env,
+			Value: string(formattedJSON),
 		})
-	},
-}
-
-var varsInternalUpdateCmd = &cobra.Command{
-	Use:   "_update",
-	Short: "Update a variable by name",
-	Long:  "Update a variable by name",
-	Args:  cobra.ExactArgs(2),
-	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
-		google.UpdateSecret(backpack, google.UpdateSecretRequest{
-			Name:  args[0],
-			Value: args[1],
-		})
-	},
-}
-
-var varsInternalDeleteCmd = &cobra.Command{
-	Use:   "_delete",
-	Short: "Delete a variable by name",
-	Long:  "Update a variable by name",
-	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
-		google.DeleteSecret(backpack, args[0])
 	},
 }
 
@@ -146,16 +75,10 @@ var varsCmd = &cobra.Command{
 }
 
 func init() {
-	varsCmd.AddCommand(varsContextCmd)
-
 	varsGetCmd.Flags().String("env", symbols.EnvDevelopment, "environment")
 	varsCmd.AddCommand(varsGetCmd)
 	varsPutCmd.Flags().String("env", symbols.EnvDevelopment, "environment")
 	varsCmd.AddCommand(varsPutCmd)
-
-	varsCmd.AddCommand(varsInternalNewCmd)
-	varsCmd.AddCommand(varsInternalUpdateCmd)
-	varsCmd.AddCommand(varsInternalDeleteCmd)
 
 	rootCmd.AddCommand(varsCmd)
 }

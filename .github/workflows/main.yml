@@ -50,7 +50,7 @@ jobs:
   # Build and publish docker artifact
   release_build:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master'
+    if: github.ref == 'refs/heads/disabled'
     needs: frontend_build
     steps:
       - uses: actions/checkout@v1
