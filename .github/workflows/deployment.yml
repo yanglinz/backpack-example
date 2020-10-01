@@ -8,7 +8,7 @@ env:
   GCP_PROJECT_ID: default-263000
 
 jobs:
-  debug_secrets:
+  set_secrets:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
