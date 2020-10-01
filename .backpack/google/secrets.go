@@ -68,10 +68,7 @@ func bootstrapServiceAccount(backpack internal.Context) {
 	}
 	command := strings.Join(parts, " ")
 	shell := internal.GetCommand(command)
-	err := shell.Run()
-	if err != nil {
-		panic(err)
-	}
+	shell.Run()
 
 	// Grant service account access to secrets
 	serviceAccountEmail := fmt.Sprintf(
@@ -87,10 +84,21 @@ func bootstrapServiceAccount(backpack internal.Context) {
 	}
 	command = strings.Join(parts, " ")
 	shell = internal.GetCommand(command)
-	err = shell.Run()
-	if err != nil {
-		panic(err)
+	shell.Run()
+
+	// Grant the global service account
+	serviceAccountEmailGlobal := fmt.Sprintf(
+		"serviceAccount:%s@%s.iam.gserviceaccount.com",
+		"backpack-global-service",
+		backpack.Google.ProjectID,
+	)
+	parts = []string{
+		"berglas grant", grantKey,
+		"--member", serviceAccountEmailGlobal,
 	}
+	command = strings.Join(parts, " ")
+	shell = internal.GetCommand(command)
+	shell.Run()
 }
 
 // BootstrapSecrets for berglas
