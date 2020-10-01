@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-  release_build:
+  debug_secrets:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
