@@ -47,19 +47,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-  debug_secrets:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-go@v1
-        with:
-          go-version: 1.13.8
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          version: "270.0.0"
-          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-      - run: ./backpack
-
   # Build and publish docker artifact
   release_build:
     runs-on: ubuntu-latest
