@@ -19,7 +19,7 @@ jobs:
         with:
           version: "270.0.0"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-      - run: ./backpack
+      - run: ./backpack vars get
 
   deploy:
     runs-on: ubuntu-latest
