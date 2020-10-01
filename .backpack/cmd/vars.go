@@ -13,17 +13,6 @@ import (
 	"github.com/yanglinz/backpack/symbols"
 )
 
-var varsContextCmd = &cobra.Command{
-	Use:   "context",
-	Short: "Output current context info",
-	Long:  "Output current context info",
-	Args:  cobra.ExactArgs(0),
-	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
-		google.ListSecrets(backpack)
-	},
-}
-
 var varsGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Sync variables from cloud to local file",
@@ -97,45 +86,6 @@ var varsPutCmd = &cobra.Command{
 	},
 }
 
-var varsInternalNewCmd = &cobra.Command{
-	Use:   "_new",
-	Short: "Create a new variable by name",
-	Long:  "Create a new variable by name",
-	Args:  cobra.ExactArgs(2),
-	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
-		google.CreateSecret(backpack, google.CreateSecretRequest{
-			Name:  args[0],
-			Value: args[1],
-		})
-	},
-}
-
-var varsInternalUpdateCmd = &cobra.Command{
-	Use:   "_update",
-	Short: "Update a variable by name",
-	Long:  "Update a variable by name",
-	Args:  cobra.ExactArgs(2),
-	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
-		google.UpdateSecret(backpack, google.UpdateSecretRequest{
-			Name:  args[0],
-			Value: args[1],
-		})
-	},
-}
-
-var varsInternalDeleteCmd = &cobra.Command{
-	Use:   "_delete",
-	Short: "Delete a variable by name",
-	Long:  "Update a variable by name",
-	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
-		google.DeleteSecret(backpack, args[0])
-	},
-}
-
 var varsCmd = &cobra.Command{
 	Use:   "vars",
 	Short: "Configure environmental variables and secrets",
@@ -146,16 +96,10 @@ var varsCmd = &cobra.Command{
 }
 
 func init() {
-	varsCmd.AddCommand(varsContextCmd)
-
 	varsGetCmd.Flags().String("env", symbols.EnvDevelopment, "environment")
 	varsCmd.AddCommand(varsGetCmd)
 	varsPutCmd.Flags().String("env", symbols.EnvDevelopment, "environment")
 	varsCmd.AddCommand(varsPutCmd)
-
-	varsCmd.AddCommand(varsInternalNewCmd)
-	varsCmd.AddCommand(varsInternalUpdateCmd)
-	varsCmd.AddCommand(varsInternalDeleteCmd)
 
 	rootCmd.AddCommand(varsCmd)
 }
