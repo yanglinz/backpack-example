@@ -8,6 +8,7 @@ import (
 	"cloud.google.com/go/storage"
 	"github.com/GoogleCloudPlatform/berglas/pkg/berglas"
 	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/symbols"
 )
 
 const namespacePrefix = "backpack-berglas-"
@@ -28,6 +29,32 @@ func bucketExists(bucketName string) bool {
 		return true
 	}
 	return false
+}
+
+func bootstrapBucket(backpack internal.Context) {
+	ctx := context.Background()
+	bucketName := namespacePrefix + backpack.Name
+	exists := bucketExists(bucketName)
+	if exists {
+		return
+	}
+
+	err := berglas.Bootstrap(ctx, &berglas.StorageBootstrapRequest{
+		ProjectID: backpack.Google.ProjectID,
+		Bucket:    bucketName,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	CreateSecret(backpack, CreateSecretRequest{
+		Env:   symbols.EnvDevelopment,
+		Value: "{}",
+	})
+	CreateSecret(backpack, CreateSecretRequest{
+		Env:   symbols.EnvProduction,
+		Value: "{}",
+	})
 }
 
 func bootstrapServiceAccount(backpack internal.Context) {
@@ -65,34 +92,6 @@ func bootstrapServiceAccount(backpack internal.Context) {
 	}
 }
 
-func bootstrapBucket(backpack internal.Context) {
-	ctx := context.Background()
-	bucketName := namespacePrefix + backpack.Name
-	exists := bucketExists(bucketName)
-	if exists {
-		return
-	}
-
-	// Run the berglas bootstrap command
-	err := berglas.Bootstrap(ctx, &berglas.StorageBootstrapRequest{
-		ProjectID: backpack.Google.ProjectID,
-		Bucket:    bucketName,
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	// Bootstrap the initial secrets
-	CreateSecret(backpack, CreateSecretRequest{
-		Name:  secretName,
-		Value: "{}",
-	})
-	CreateSecret(backpack, CreateSecretRequest{
-		Name:  secretNameDev,
-		Value: "{}",
-	})
-}
-
 // BootstrapSecrets for berglas
 func BootstrapSecrets(backpack internal.Context) {
 	bootstrapBucket(backpack)
@@ -101,14 +100,20 @@ func BootstrapSecrets(backpack internal.Context) {
 
 // CreateSecretRequest params
 type CreateSecretRequest struct {
-	Name  string
+	Env   string
 	Value string
 }
 
 // CreateSecret creates or updates a secret
 func CreateSecret(backpack internal.Context, req CreateSecretRequest) {
-	bucketName := "berglas-" + backpack.Name
-	bucketPath := bucketName + "/" + req.Name
+	bucketName := namespacePrefix + backpack.Name
+
+	name := secretNameDev
+	if req.Env == symbols.EnvProduction {
+		name = secretName
+	}
+	bucketPath := bucketName + "/" + name
+
 	encryptionKey := "projects/" + backpack.Google.ProjectID + "/locations/global/keyRings/berglas/cryptoKeys/berglas-key"
 	parts := []string{
 		"berglas create", bucketPath, req.Value,
@@ -124,14 +129,20 @@ func CreateSecret(backpack internal.Context, req CreateSecretRequest) {
 
 // UpdateSecretRequest params
 type UpdateSecretRequest struct {
-	Name  string
+	Env   string
 	Value string
 }
 
-// UpdateSecret creates or updates a secret
-func UpdateSecret(backpack internal.Context, req UpdateSecretRequest) {
+// UpdateSecrets updates the composite secrets
+func UpdateSecrets(backpack internal.Context, req UpdateSecretRequest) {
 	bucketName := namespacePrefix + backpack.Name
-	bucketPath := bucketName + "/" + req.Name
+
+	name := secretNameDev
+	if req.Env == symbols.EnvProduction {
+		name = secretName
+	}
+	bucketPath := bucketName + "/" + name
+
 	encryptionKey := "projects/" + backpack.Google.ProjectID + "/locations/global/keyRings/berglas/cryptoKeys/berglas-key"
 	parts := []string{
 		"berglas update", bucketPath, req.Value,
@@ -145,10 +156,16 @@ func UpdateSecret(backpack internal.Context, req UpdateSecretRequest) {
 	}
 }
 
-// GetSecret list a single secret
-func GetSecret(backpack internal.Context, name string) string {
+// GetSecrets fetches the composite secrets
+func GetSecrets(backpack internal.Context, env string) string {
 	bucketName := namespacePrefix + backpack.Name
+
+	name := secretNameDev
+	if env == symbols.EnvProduction {
+		name = secretName
+	}
 	bucketPath := bucketName + "/" + name
+
 	parts := []string{"berglas access", bucketPath}
 	command := strings.Join(parts, " ")
 	shell := internal.GetCommand(command)

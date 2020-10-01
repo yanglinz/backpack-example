@@ -8,7 +8,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yanglinz/backpack/google"
-	"github.com/yanglinz/backpack/heroku"
 	"github.com/yanglinz/backpack/internal"
 	"github.com/yanglinz/backpack/symbols"
 )
@@ -21,12 +20,7 @@ var varsGetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
 		backpack := internal.ParseContext(cmd)
-
-		secretKey := "BERGLAS_APP_DEV_JSON"
-		if env == symbols.EnvProduction {
-			secretKey = "BERGLAS_APP_JSON"
-		}
-		secret := google.GetSecret(backpack, secretKey)
+		secret := google.GetSecrets(backpack, env)
 
 		var envJSON map[string]string
 		json.Unmarshal([]byte(secret), &envJSON)
@@ -48,13 +42,10 @@ var varsPutCmd = &cobra.Command{
 		env, _ := cmd.Flags().GetString("env")
 		backpack := internal.ParseContext(cmd)
 
-		secretKey := "BERGLAS_APP_DEV_JSON"
 		envFile := filepath.Join(backpack.Root, "etc/development.json")
 		if env == symbols.EnvProduction {
-			secretKey = "BERGLAS_APP_JSON"
 			envFile = filepath.Join(backpack.Root, "etc/production.json")
 		}
-
 		envData, err := ioutil.ReadFile(envFile)
 		if err != nil {
 			panic(err)
@@ -67,22 +58,10 @@ var varsPutCmd = &cobra.Command{
 			panic(err)
 		}
 
-		if backpack.Runtime == symbols.RuntimeHeroku {
-			for k, v := range envJSON {
-				heroku.PutSecret(heroku.PutSecretRequest{
-					App:   backpack.Heroku.AppName,
-					Name:  k,
-					Value: v,
-				})
-			}
-		}
-
-		if backpack.Runtime == symbols.RuntimeCloudrun {
-			google.UpdateSecret(backpack, google.UpdateSecretRequest{
-				Name:  secretKey,
-				Value: string(formattedJSON),
-			})
-		}
+		google.UpdateSecrets(backpack, google.UpdateSecretRequest{
+			Env:   env,
+			Value: string(formattedJSON),
+		})
 	},
 }
 
