@@ -19,6 +19,9 @@ jobs:
         with:
           version: "270.0.0"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      - run: |
+          go get github.com/GoogleCloudPlatform/berglas/...
+          go install github.com/GoogleCloudPlatform/berglas
       - run: ./backpack vars get
 
   deploy:
