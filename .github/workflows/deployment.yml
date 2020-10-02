@@ -13,12 +13,16 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
-
-      # Run terraform plan
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.13.8
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: "290.0.1"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          export_default_credentials: true
+
+      # Run terraform plan
       - run: .backpack/github/install-terraform.sh
       - run: .backpack/github/terraform-plan.sh
         env:
@@ -31,22 +35,14 @@ jobs:
           TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
+      # Setup secret variables
+      - run: .backpack/github/install-berglas.sh
+      - run: |
+          mkdir -p var/env
+          ./backpack vars get > /dev/null 2>&1
+          ./backpack vars get > var/env/production.json
+
       # Run deployment script
       - run: .backpack/github/deploy.sh
-        env: 
+        env:
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
-
-  set_secrets:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-go@v1
-        with:
-          go-version: 1.13.8
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          version: "290.0.1"
-          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-          export_default_credentials: true
-      - run: .backpack/github/install-berglas.sh
-      - run: ./backpack vars get
