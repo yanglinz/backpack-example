@@ -6,3 +6,7 @@
         src: "{{ playbook_dir }}/../../.."
         dest: /opt/backpack-app
         recursive: yes
+    - name: Run Post Deployment Script
+      script: "{{ playbook_dir }}/../post-deploy.sh"
+      env:
+        APP_NAME: "{{ lookup('env', 'APP_NAME') }}"
