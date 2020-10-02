@@ -18,4 +18,4 @@ sudo chmod 600 ~/.ssh/id_rsa.pub
 
 # Setup git remote and push remote
 git remote add dokku dokku@"$instance_ip":"$APP_NAME"
-GIT_SSH_COMMAND="ssh -l dokku" git push dokku "$local_branch":master -f
+GIT_SSH_COMMAND="ssh -l dokku" git push dokku "$local_branch":master -f --verbose
