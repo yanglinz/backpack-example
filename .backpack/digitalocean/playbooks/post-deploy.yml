@@ -1,0 +1,12 @@
+- name: DigitalOcean Deployment
+  hosts: all
+  tasks:
+    - name: Copy Application Directory
+      synchronize:
+        src: "{{ playbook_dir }}/../../.."
+        dest: /opt/backpack-app
+        recursive: yes
+    - name: Run Post Deployment Script
+      script: "{{ playbook_dir }}/../post-deploy.sh"
+      environment:
+        APP_NAME: "{{ lookup('env', 'APP_NAME') }}"

@@ -35,14 +35,23 @@ jobs:
           TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      # Setup secret variables
-      - run: .backpack/github/install-berglas.sh
-      - run: |
-          mkdir -p var/env
-          ./backpack vars get > /dev/null 2>&1
-          ./backpack vars get > var/env/production.json
-
       # Run deployment script
       - run: .backpack/github/deploy.sh
         env:
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
+
+      # Setup secret variables
+      - run: .backpack/github/install-berglas.sh
+      - run: |
+          mkdir -p var/env
+          ./backpack vars get --env=production > /dev/null 2>&1
+          ./backpack vars get --env=production > var/env/production.json
+
+      # Run ansible on server
+      - run: .backpack/github/setup-ansible.sh
+        env:
+          DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
+      - run: |
+          ansible-playbook .backpack/digitalocean/playbooks/post-deploy.yml \
+            --inventory ./etc/ansible/hosts \
+            --user root
