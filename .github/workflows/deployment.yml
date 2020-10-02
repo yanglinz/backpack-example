@@ -41,8 +41,10 @@ jobs:
           mkdir -p var/env
           ./backpack vars get > /dev/null 2>&1
           ./backpack vars get > var/env/production.json
+          ./backpack vars get
+          ls -la ./var/env
 
       # Run deployment script
-      - run: .backpack/github/deploy.sh
-        env:
-          DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
+      # - run: .backpack/github/deploy.sh
+        # env:
+          # DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
