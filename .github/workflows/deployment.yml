@@ -49,7 +49,7 @@ jobs:
 
       # Run ansible on server
       - run: .backpack/github/setup-ansible.sh
-        env: 
+        env:
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
       - run: |
           ansible-playbook .backpack/digitalocean/playbooks/post-deploy.yml \
