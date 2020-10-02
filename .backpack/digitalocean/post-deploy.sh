@@ -8,7 +8,7 @@ echo "Setting ${APP_NAME} application configs..."
 
 for name in $(jq --raw-output 'keys | .[]' "$ENV_SOURCE"); do
   value=$(jq --raw-output ".${name}" "$ENV_SOURCE")
-  echo "$name - $value"
+  dokku config:set --no-restart "$APP_NAME" "$name"="$value"
 done
 
 # Set a dummy variable to reload
