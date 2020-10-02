@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-ENV_SOURCE="./var/env/production.json"
+ENV_SOURCE="/opt/backpack-app/var/env/production.json"
 
 echo "Setting ${APP_NAME} application configs..."
 
