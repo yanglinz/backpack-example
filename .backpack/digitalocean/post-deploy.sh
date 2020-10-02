@@ -12,3 +12,4 @@ for name in $(jq --raw-output 'keys | .[]' "$ENV_SOURCE"); do
 done
 
 dokku config:set "$APP_NAME" TIMESTAMP=$(date +%s)
+dokku domains:enable backpack-example
