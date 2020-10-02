@@ -2,6 +2,7 @@ package google
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -151,10 +152,10 @@ func UpdateSecrets(backpack internal.Context, req UpdateSecretRequest) {
 		name = secretName
 	}
 	bucketPath := bucketName + "/" + name
-
+	encodedValue := base64.StdEncoding.EncodeToString([]byte(req.Value))
 	encryptionKey := "projects/" + backpack.Google.ProjectID + "/locations/global/keyRings/berglas/cryptoKeys/berglas-key"
 	parts := []string{
-		"berglas update", bucketPath, req.Value,
+		"berglas update", bucketPath, encodedValue,
 		"--key", encryptionKey,
 	}
 	command := strings.Join(parts, " ")
@@ -174,7 +175,6 @@ func GetSecrets(backpack internal.Context, env string) string {
 		name = secretName
 	}
 	bucketPath := bucketName + "/" + name
-
 	parts := []string{"berglas access", bucketPath}
 	command := strings.Join(parts, " ")
 	shell := internal.GetCommand(command)
@@ -184,5 +184,10 @@ func GetSecrets(backpack internal.Context, env string) string {
 		panic(err)
 	}
 
-	return string(out)
+	decodedValue, err := base64.StdEncoding.DecodeString(string(out))
+	if err != nil {
+		panic(err)
+	}
+
+	return string(decodedValue)
 }

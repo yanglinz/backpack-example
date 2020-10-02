@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -22,14 +21,7 @@ var varsGetCmd = &cobra.Command{
 		backpack := internal.ParseContext(cmd)
 		secret := google.GetSecrets(backpack, env)
 
-		var envJSON map[string]string
-		json.Unmarshal([]byte(secret), &envJSON)
-		formattedJSON, err := json.MarshalIndent(envJSON, "", "  ")
-		if err != nil {
-			panic(err)
-		}
-
-		fmt.Println(string(formattedJSON))
+		fmt.Println(string(secret))
 	},
 }
 
@@ -49,16 +41,9 @@ var varsPutCmd = &cobra.Command{
 			panic(err)
 		}
 
-		var envJSON map[string]string
-		json.Unmarshal(envData, &envJSON)
-		formattedJSON, err := json.Marshal(envJSON)
-		if err != nil {
-			panic(err)
-		}
-
 		google.UpdateSecrets(backpack, google.UpdateSecretRequest{
 			Env:   env,
-			Value: string(formattedJSON),
+			Value: string(envData),
 		})
 	},
 }
