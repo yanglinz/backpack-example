@@ -14,8 +14,8 @@ import (
 
 var varsGetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Sync variables from cloud to local file",
-	Long:  "Sync variables from cloud to local file",
+	Short: "Output current list of variables",
+	Long:  "Output current list of variables",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
@@ -35,17 +35,15 @@ var varsGetCmd = &cobra.Command{
 
 var varsPutCmd = &cobra.Command{
 	Use:   "put",
-	Short: "Sync variables from local file to cloud",
-	Long:  "Sync variables from local file to cloud",
+	Short: "Put variables from local file to secrets manager",
+	Long:  "Put variables from local file to secrets manager",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
+		file, _ := cmd.Flags().GetString("file")
 		backpack := internal.ParseContext(cmd)
 
-		envFile := filepath.Join(backpack.Root, "etc/development.json")
-		if env == symbols.EnvProduction {
-			envFile = filepath.Join(backpack.Root, "etc/production.json")
-		}
+		envFile := filepath.Join(backpack.Root, file)
 		envData, err := ioutil.ReadFile(envFile)
 		if err != nil {
 			panic(err)
@@ -78,6 +76,7 @@ func init() {
 	varsGetCmd.Flags().String("env", symbols.EnvDevelopment, "environment")
 	varsCmd.AddCommand(varsGetCmd)
 	varsPutCmd.Flags().String("env", symbols.EnvDevelopment, "environment")
+	varsPutCmd.Flags().String("file", ".", "file")
 	varsCmd.AddCommand(varsPutCmd)
 
 	rootCmd.AddCommand(varsCmd)
