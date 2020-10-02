@@ -1,7 +1,7 @@
 - name: DigitalOcean Bootstrapper
   hosts: all
   tasks:
-    - name: Copy Backpack Directory
+    - name: Copy Application Directory
       synchronize:
         src: "{{ playbook_dir }}/../../.."
         dest: /opt/backpack-app
