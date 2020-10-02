@@ -8,5 +8,5 @@
         recursive: yes
     - name: Run Post Deployment Script
       script: "{{ playbook_dir }}/../post-deploy.sh"
-      env:
+      environment:
         APP_NAME: "{{ lookup('env', 'APP_NAME') }}"
