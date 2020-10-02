@@ -11,4 +11,4 @@ for name in $(jq --raw-output 'keys | .[]' "$ENV_SOURCE"); do
   dokku config:set --no-restart "$APP_NAME" "$name"="$value"
 done
 
-# Set a dummy variable to reload
+dokku config:set "$APP_NAME" TIMESTAMP=$(date +%s)
