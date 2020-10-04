@@ -41,12 +41,6 @@ resource "digitalocean_firewall" "web" {
   }
 
   inbound_rule {
-    protocol         = "tcp"
-    port_range       = "9418"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  inbound_rule {
     protocol         = "icmp"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
@@ -60,12 +54,6 @@ resource "digitalocean_firewall" "web" {
   outbound_rule {
     protocol         = "tcp"
     port_range       = "443"
-    destination_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  outbound_rule {
-    protocol         = "tcp"
-    port_range       = "9418"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
