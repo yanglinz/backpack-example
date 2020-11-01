@@ -2,22 +2,18 @@ name: Infrastructure
 
 on: [workflow_dispatch]
 
-env:
-  APP_NAME: backpack-example
-  RUNTIME_PLATFORM: CLOUD_RUN
-  GCP_PROJECT_ID: default-263000
-
 jobs:
   provision:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-
-      # Run terraform plan
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: "270.0.0"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      - uses: ./.backpack/github/actions/set-env
+
+      # Run terraform
       - run: .backpack/github/install-terraform.sh
       - run: .backpack/github/terraform-plan.sh
         env:

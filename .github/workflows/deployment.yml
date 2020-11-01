@@ -2,15 +2,10 @@ name: Deployment
 
 on: [push]
 
-env:
-  APP_NAME: backpack-example
-  RUNTIME_PLATFORM: CLOUD_RUN
-  GCP_PROJECT_ID: default-263000
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-go@v1
@@ -21,8 +16,9 @@ jobs:
           version: "290.0.1"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
+      - uses: ./.backpack/github/actions/set-env
 
-      # Run terraform plan
+      # Run terraform
       - run: .backpack/github/install-terraform.sh
       - run: .backpack/github/terraform-plan.sh
         env:
@@ -36,22 +32,14 @@ jobs:
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       # Run deployment script
-      - run: .backpack/github/deploy.sh
+      - run: .backpack/github/install-berglas.sh
+      - run: .backpack/github/build-release.sh
         env:
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
-
-      # Setup secret variables
-      - run: .backpack/github/install-berglas.sh
-      - run: |
-          mkdir -p var/env
-          ./backpack vars get --env=production > /dev/null 2>&1
-          ./backpack vars get --env=production > var/env/production.json
-
-      # Run ansible on server
       - run: .backpack/github/setup-ansible.sh
         env:
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
       - run: |
-          ansible-playbook .backpack/digitalocean/playbooks/post-deploy.yml \
+          ansible-playbook .backpack/digitalocean/playbooks/deploy.yml \
             --inventory ./etc/ansible/hosts \
             --user root

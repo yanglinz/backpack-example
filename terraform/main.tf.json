@@ -1,0 +1,23 @@
+{
+  "module": [
+    {
+      "backpack_example_web": [
+        {
+          "app_context": {
+            "app_name": "backpack-example"
+          },
+          "source": "../.backpack/terraform/core-web-digitalocean"
+        }
+      ]
+    }
+  ],
+  "output": [
+    {
+      "ip_address": [
+        {
+          "value": "${module.backpack_example_web.ip_address}"
+        }
+      ]
+    }
+  ]
+}
