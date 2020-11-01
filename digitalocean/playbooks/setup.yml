@@ -1,0 +1,11 @@
+- name: DigitalOcean Bootstrapper
+  hosts: all
+  tasks:
+    - name: Run Dokku Setup
+      script: "{{ playbook_dir }}/../dokku-installer.sh"
+    - name: Debug Dokku Version
+      command: dokku version
+    - name: Setup Dokku Configs
+      script: "{{ playbook_dir }}/../dokku-setup.sh"
+      environment:
+        APP_NAME: "{{ lookup('env', 'APP_NAME') }}"

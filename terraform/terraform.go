@@ -1,121 +1,88 @@
 package terraform
 
 import (
-	"errors"
+	"encoding/json"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/rodaine/hclencoder"
+	"github.com/stoewer/go-strcase"
 	"github.com/yanglinz/backpack/internal"
-	"github.com/yanglinz/backpack/symbols"
 )
 
-type gcpProvider struct {
-	ID      string `hcl:",key"`
-	Project string `hcl:"project" hcle:"omitempty"`
-	Region  string `hcl:"zone" hcle:"omitempty"`
-	Zone    string `hcl:"region" hcle:"omitempty"`
+func createSecretConfig(backpack internal.Context) {
+	secretsPath := filepath.Join(backpack.Root, "terraform/secrets.tfvars")
+	if !internal.Exists(secretsPath) {
+		sourcePath := filepath.Join(backpack.Root, ".backpack/terraform/root/secrets.tfvars")
+		internal.CopyFile(sourcePath, secretsPath)
+	}
 }
 
-type variable struct {
-	ID      string `hcl:",key"`
-	Type    string `hcl:"type" hcle:"omitempty"`
-	Default string `hcl:"default" hcle:"omitempty"`
+func createMainConfig(backpack internal.Context) {
+	config := make(map[string]interface{})
+
+	// Define outermost module
+	modules := []interface{}{}
+
+	// Define main module
+	appContext := make(map[string]interface{})
+	appContext["app_name"] = backpack.Name
+
+	module := make(map[string]interface{})
+	module["source"] = "../.backpack/terraform/core-web-digitalocean"
+	module["app_context"] = appContext
+
+	moduleContainer := make(map[string]interface{})
+	moduleName := strcase.SnakeCase(backpack.Name + "_web")
+	moduleContainer[moduleName] = []interface{}{module}
+	modules = append(modules, moduleContainer)
+
+	// Define outputs
+	outputs := []interface{}{}
+
+	addressOutput := make(map[string]interface{})
+	addressOutput["value"] = "${module." + moduleName + ".ip_address}"
+
+	outputContainer := make(map[string]interface{})
+	outputContainer["ip_address"] = []interface{}{addressOutput}
+	outputs = append(outputs, outputContainer)
+
+	config["module"] = modules
+	config["output"] = outputs
+
+	// Write module to file
+	content, _ := json.MarshalIndent(config, "", "  ")
+	configPath := filepath.Join(backpack.Root, "terraform/main.tf.json")
+	err := ioutil.WriteFile(configPath, []byte(content), 0666)
+	if err != nil {
+		panic(err)
+	}
 }
 
-type webModule struct {
-	ID                   string `hcl:",key"`
-	Source               string `hcl:"source" hcle:"omitempty"`
-	ContextName          string `hcl:"context_name" hcle:"omitempty"`
-	ProjectName          string `hcl:"project_name" hcle:"omitempty"`
-	DjangoSettingsModule string `hcl:"django_settings_module" hcle:"omitempty"`
-	ImageTag             string `hcl:"image_tag" hcle:"omitempty"`
-	GCPProject           string `hcl:"gcp_project" hcle:"omitempty"`
-}
-
-type autoconfig struct {
-	Providers []gcpProvider `hcl:"provider"`
-	Variables []variable    `hcl:"variable"`
-	Modules   []webModule   `hcl:"module"`
-}
-
-func getCloudrunConfig(backpack internal.Context) autoconfig {
-	providers := []gcpProvider{
-		gcpProvider{
-			ID:      "google",
-			Project: backpack.Google.ProjectID,
-			Region:  backpack.Google.Region,
-			Zone:    backpack.Google.Zone,
-		},
+func createMetaConfig(backpack internal.Context) {
+	sourcePath := filepath.Join(backpack.Root, ".backpack/terraform/root/meta.tf")
+	targetPath := filepath.Join(backpack.Root, "terraform/meta.tf")
+	content, err := ioutil.ReadFile(sourcePath)
+	if err != nil {
+		panic(err)
 	}
 
-	variables := []variable{
-		variable{
-			ID:      "context_name",
-			Type:    "string",
-			Default: backpack.Name,
-		},
-		variable{
-			ID:      "image_tag",
-			Type:    "string",
-			Default: "latest",
-		},
+	output := string(content)
+	output = strings.ReplaceAll(output, "{{BACKPACK_DEFAULT_ORG}}", "yanglin")
+	output = strings.ReplaceAll(output, "{{BACKPACK_WORKSPACE}}", backpack.Name)
+	err = ioutil.WriteFile(targetPath, []byte(output), 0644)
+	if err != nil {
+		panic(err)
 	}
-
-	project := backpack.Projects[0]
-	modules := []webModule{
-		webModule{
-			ID:                   "app_web",
-			Source:               "../.backpack/terraform/web-django-module",
-			ContextName:          "${var.context_name}",
-			ProjectName:          "core",
-			DjangoSettingsModule: strings.ReplaceAll(project.Path, "/", ".") + ".settings",
-			ImageTag:             "${var.image_tag}",
-			GCPProject:           backpack.Google.ProjectID,
-		},
-	}
-
-	config := autoconfig{
-		Providers: providers,
-		Variables: variables,
-		Modules:   modules,
-	}
-	return config
-}
-
-func getHerokuConfig(backpack internal.Context) autoconfig {
-	config := autoconfig{
-		Variables: nil,
-	}
-	return config
 }
 
 // CreateConfig generates the terraform config
 func CreateConfig(backpack internal.Context) {
-	input := getCloudrunConfig(backpack)
-	if backpack.Runtime == symbols.RuntimeHeroku {
-		input = getHerokuConfig(backpack)
-	}
+	terraformDir := filepath.Join(backpack.Root, "terraform")
+	os.MkdirAll(terraformDir, 0777)
 
-	hcl, err := hclencoder.Encode(input)
-	if err != nil {
-		panic(err)
-	}
-
-	configPath := filepath.Join(backpack.Root, "terraform/backpack.tf")
-	err = ioutil.WriteFile(configPath, hcl, 0644)
-	if err != nil {
-		panic(err)
-	}
-}
-
-// ValidateBackend checks whether backend.tf has been setup
-func ValidateBackend(backpack internal.Context) error {
-	backend := filepath.Join(backpack.Root, "terraform/backend.tf")
-	if internal.Exists(backend) {
-		return nil
-	}
-
-	return errors.New("Missing terraform/backend.tf")
+	createSecretConfig(backpack)
+	createMainConfig(backpack)
+	createMetaConfig(backpack)
 }
