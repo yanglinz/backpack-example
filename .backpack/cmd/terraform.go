@@ -62,6 +62,25 @@ var terraformApplyCmd = &cobra.Command{
 	},
 }
 
+var terraformDestroyCmd = &cobra.Command{
+	Use:   "__unsafe_destroy__",
+	Short: "Thin wrapper around terraform destroy",
+	Long:  "Thin wrapper around terraform destory",
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
+		backpack := internal.ParseContext(cmd)
+		terraformDir := filepath.Join(backpack.Root, "terraform")
+
+		// Run terraform apply
+		shell := internal.GetCommand("terraform destroy -var-file=secrets.tfvars")
+		shell.Dir = terraformDir
+		err := shell.Run()
+		if err != nil {
+			panic(err)
+		}
+	},
+}
+
 var terraformCmd = &cobra.Command{
 	Use:   "terraform",
 	Short: "🚀 Thin wrapper around terraform",
@@ -74,6 +93,7 @@ var terraformCmd = &cobra.Command{
 func init() {
 	terraformCmd.AddCommand(terraformPlanCmd)
 	terraformCmd.AddCommand(terraformApplyCmd)
+	terraformCmd.AddCommand(terraformDestroyCmd)
 
 	rootCmd.AddCommand(terraformCmd)
 }

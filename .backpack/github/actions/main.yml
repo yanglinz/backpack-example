@@ -2,22 +2,18 @@ name: Main
 
 on: [push]
 
-env:
-  APP_NAME: ${{APP_NAME}}
-  RUNTIME_PLATFORM: ${{RUNTIME_PLATFORM}}
-  GCP_PROJECT_ID: ${{GCP_PROJECT_ID}}
-
 jobs:
   # Build the cli and test project setup
   backpack_build:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master'
+    if: github.ref != 'refs/heads/main'
     steps:
       - uses: actions/setup-go@v1
         with:
           go-version: 1.13.8
       - uses: actions/checkout@v1
-      - run: .backpack/github/build-backpack.sh
+      - uses: ./.backpack/github/actions/set-env
+      - run: .backpack/github/test-backpack.sh
 
   # Build and test frontend JS and CSS assets
   frontend_build:
@@ -33,6 +29,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      - uses: ./.backpack/github/actions/set-env
       - run: yarn install
       - run: yarn run build
       - uses: actions/upload-artifact@v1
@@ -43,14 +40,17 @@ jobs:
   # Build and test backend python
   server_build:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master'
+    if: github.ref != 'refs/heads/main'
     steps:
       - uses: actions/checkout@v1
+      - uses: ./.backpack/github/actions/set-env
+      - run: docker-compose build
+      - run: docker-compose run "$BACKPACK_DOCKER_SERVICE_NAME" .backpack/github/test-server.sh
 
   # Build and publish docker artifact
   release_build:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/disabled'
+    if: github.ref == 'refs/heads/main'
     needs: frontend_build
     steps:
       - uses: actions/checkout@v1
@@ -60,8 +60,11 @@ jobs:
           path: build
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          version: "270.0.0"
+          version: "290.0.1"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          export_default_credentials: true
+      - uses: ./.backpack/github/actions/set-env
+      - run: .backpack/github/install-berglas.sh
       - run: .backpack/github/build-release.sh
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}

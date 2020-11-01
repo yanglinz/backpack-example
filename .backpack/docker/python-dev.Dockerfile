@@ -32,13 +32,15 @@ WORKDIR /app
 ENV HOME /home/app
 
 # Install application dependencies
-RUN pip install --no-cache-dir --trusted-host pypi.python.org pipenv
-COPY Pipfile /app/
-COPY Pipfile.lock /app/
-RUN pipenv install --dev
+COPY .backpack/docker/scripts/get-poetry.py /tmp/
+RUN python /tmp/get-poetry.py --version=1.0.5
+ENV PATH="${HOME}/.poetry/bin:${PATH}"
+COPY pyproject.toml /app/
+COPY poetry.lock /app/
+RUN poetry install
 
 # Install custom dependencies
-COPY scripts/docker /app/scripts/docker
+COPY scripts* /app/scripts
 COPY .backpack/docker/scripts/install-extra-deps.sh /tmp/
 RUN /tmp/install-extra-deps.sh
 

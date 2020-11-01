@@ -8,7 +8,7 @@ resource "digitalocean_droplet" "web" {
   image    = "ubuntu-18-04-x64"
   name     = "backpack-${var.app_context.app_name}"
   region   = "nyc3"
-  size     = "s-1vcpu-1gb"
+  size     = "s-1vcpu-2gb"
   ssh_keys = local.default_ssh_key_ids
 }
 
@@ -18,7 +18,7 @@ resource "digitalocean_floating_ip" "web" {
 }
 
 resource "digitalocean_firewall" "web" {
-  name = "backpack-web-firewall"
+  name = "backpack-${var.app_context.app_name}-firewall"
 
   droplet_ids = [digitalocean_droplet.web.id]
 

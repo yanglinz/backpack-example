@@ -1,0 +1,5 @@
+name: Backpack SetEnv
+description: Setup shared environmental variables
+runs:
+  using: docker
+  image: Dockerfile

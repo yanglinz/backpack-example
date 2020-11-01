@@ -7,7 +7,7 @@ containers.
 
 The simplest way of attaching a debugger would be using `remote-pdb`. We can
 attach the debugger after installing the dependency
-`pipenv install --dev remote_pdb`.
+`poetry install --dev remote_pdb`.
 
 ```python
 from remote_pdb import RemotePdb

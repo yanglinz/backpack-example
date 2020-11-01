@@ -12,7 +12,7 @@ var stopCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		backpack := internal.ParseContext(cmd)
 
-		command := "docker-compose stop"
+		command := "docker-compose down"
 		shell := internal.GetCommand(command)
 		shell.Dir = backpack.Root
 		err := shell.Run()
