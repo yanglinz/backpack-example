@@ -16,7 +16,7 @@ jobs:
           version: "290.0.1"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
-      - uses: ./.backpack/delivery/actions/set-env
+      - uses: ./.backpack/delivery/actions/app-context-action
 
       # Run terraform
       - run: .backpack/delivery/install-terraform.sh

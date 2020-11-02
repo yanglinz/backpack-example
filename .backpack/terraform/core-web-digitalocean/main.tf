@@ -8,7 +8,7 @@ resource "digitalocean_droplet" "web" {
   image    = "ubuntu-18-04-x64"
   name     = "backpack-${var.app_context.app_name}"
   region   = "nyc3"
-  size     = "s-1vcpu-2gb"
+  size     = "s-1vcpu-1gb"
   ssh_keys = local.default_ssh_key_ids
 }
 

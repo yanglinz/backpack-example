@@ -1,7 +1,7 @@
 import os
 from os import path
 
-from yaml import load
+import yaml
 
 
 def export_env(key, value):
@@ -14,7 +14,7 @@ def get_backpack_manifest():
     manifest_path = path.join(os.getcwd(), "backpack.yml")
     with open(manifest_path, "r") as f:
         content = f.read()
-        return load(content)
+        return yaml.load(content, Loader=yaml.FullLoader)
 
 
 def export_backpack_envs(manifest):
