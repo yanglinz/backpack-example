@@ -8,8 +8,8 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/GoogleCloudPlatform/berglas/pkg/berglas"
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/internal"
-	"github.com/yanglinz/backpack/symbols"
 )
 
 const namespacePrefix = "backpack-berglas-"
@@ -50,11 +50,11 @@ func bootstrapBucket(backpack internal.Context) {
 	}
 
 	CreateSecret(backpack, CreateSecretRequest{
-		Env:   symbols.EnvDevelopment,
+		Env:   application.EnvDevelopment,
 		Value: "{}",
 	})
 	CreateSecret(backpack, CreateSecretRequest{
-		Env:   symbols.EnvProduction,
+		Env:   application.EnvProduction,
 		Value: "{}",
 	})
 }
@@ -119,7 +119,7 @@ func CreateSecret(backpack internal.Context, req CreateSecretRequest) {
 	bucketName := namespacePrefix + backpack.Name
 
 	name := secretNameDev
-	if req.Env == symbols.EnvProduction {
+	if req.Env == application.EnvProduction {
 		name = secretName
 	}
 	bucketPath := bucketName + "/" + name
@@ -148,7 +148,7 @@ func UpdateSecrets(backpack internal.Context, req UpdateSecretRequest) {
 	bucketName := namespacePrefix + backpack.Name
 
 	name := secretNameDev
-	if req.Env == symbols.EnvProduction {
+	if req.Env == application.EnvProduction {
 		name = secretName
 	}
 	bucketPath := bucketName + "/" + name
@@ -171,7 +171,7 @@ func GetSecrets(backpack internal.Context, env string) string {
 	bucketName := namespacePrefix + backpack.Name
 
 	name := secretNameDev
-	if env == symbols.EnvProduction {
+	if env == application.EnvProduction {
 		name = secretName
 	}
 	bucketPath := bucketName + "/" + name

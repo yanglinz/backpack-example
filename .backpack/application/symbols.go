@@ -1,4 +1,4 @@
-package symbols
+package application
 
 // Target environments
 const (

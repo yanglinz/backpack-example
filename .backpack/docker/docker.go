@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/goccy/go-yaml"
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/internal"
-	"github.com/yanglinz/backpack/symbols"
 )
 
 var composeHeader = `# @backpack
@@ -77,7 +77,7 @@ func getDependentServices(backpack internal.Context, req composeConfigRequest) m
 
 func getServerService(backpack internal.Context, project internal.Project, req composeConfigRequest) (string, composeService) {
 	dockerfile := ".backpack/docker/python-dev.Dockerfile"
-	if req.target == symbols.EnvProduction {
+	if req.target == application.EnvProduction {
 		dockerfile = ".backpack/docker/python-prod.Dockerfile"
 	}
 	build := composeBuild{
@@ -86,7 +86,7 @@ func getServerService(backpack internal.Context, project internal.Project, req c
 	}
 
 	startCommand := ".backpack/runtime/entry-dev.sh"
-	if req.target == symbols.EnvProduction {
+	if req.target == application.EnvProduction {
 		startCommand = ".backpack/runtime/entry-prod.sh"
 	}
 	commands := []string{startCommand}
@@ -114,7 +114,7 @@ func getServerService(backpack internal.Context, project internal.Project, req c
 		// Distinguish whether they're running locally or in GCP
 		"BACKPACK_DOCKER_COMPOSE=true",
 	}
-	if req.target == symbols.EnvProduction {
+	if req.target == application.EnvProduction {
 		// Set PORT so just like Heroku and Cloudrun environments
 		environment = append(environment, "PORT=8080")
 	}
@@ -179,7 +179,7 @@ func GetComposeConfig(backpack internal.Context, req composeConfigRequest) Compo
 // CreateComposeConfig creates the project docker-compose.yml
 func CreateComposeConfig(backpack internal.Context) {
 	defaultConfig := GetComposeConfig(backpack, composeConfigRequest{
-		target: symbols.EnvDevelopment,
+		target: application.EnvDevelopment,
 	})
 	configYaml, _ := yaml.Marshal(defaultConfig)
 	content := strings.Join([]string{composeHeader, string(configYaml)}, "")
@@ -191,7 +191,7 @@ func CreateComposeConfig(backpack internal.Context) {
 	}
 
 	prodConfig := GetComposeConfig(backpack, composeConfigRequest{
-		target: symbols.EnvProduction,
+		target: application.EnvProduction,
 	})
 	configYaml, _ = yaml.Marshal(prodConfig)
 	content = strings.Join([]string{composeHeader, string(configYaml)}, "")

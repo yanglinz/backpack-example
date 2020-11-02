@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/google"
 	"github.com/yanglinz/backpack/internal"
-	"github.com/yanglinz/backpack/symbols"
 )
 
 var varsGetCmd = &cobra.Command{
@@ -58,9 +58,9 @@ var varsCmd = &cobra.Command{
 }
 
 func init() {
-	varsGetCmd.Flags().String("env", symbols.EnvDevelopment, "environment")
+	varsGetCmd.Flags().String("env", application.EnvDevelopment, "environment")
 	varsCmd.AddCommand(varsGetCmd)
-	varsPutCmd.Flags().String("env", symbols.EnvDevelopment, "environment")
+	varsPutCmd.Flags().String("env", application.EnvDevelopment, "environment")
 	varsPutCmd.Flags().String("file", ".", "file")
 	varsCmd.AddCommand(varsPutCmd)
 
