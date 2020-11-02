@@ -17,8 +17,8 @@ var varsGetCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
-		backpack := application.ParseContext(cmd)
-		secret := google.GetSecrets(backpack, env)
+		appContext := application.ParseContext(cmd)
+		secret := google.GetSecrets(appContext, env)
 
 		fmt.Println(string(secret))
 	},
@@ -32,15 +32,15 @@ var varsPutCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
 		file, _ := cmd.Flags().GetString("file")
-		backpack := application.ParseContext(cmd)
+		appContext := application.ParseContext(cmd)
 
-		envFile := filepath.Join(backpack.Root, file)
+		envFile := filepath.Join(appContext.Root, file)
 		envData, err := ioutil.ReadFile(envFile)
 		if err != nil {
 			panic(err)
 		}
 
-		google.UpdateSecrets(backpack, google.UpdateSecretRequest{
+		google.UpdateSecrets(appContext, google.UpdateSecretRequest{
 			Env:   env,
 			Value: string(envData),
 		})

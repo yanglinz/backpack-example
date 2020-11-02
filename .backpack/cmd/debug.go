@@ -13,8 +13,8 @@ var debugCmd = &cobra.Command{
 	Short: "🔧 Output debug info",
 	Long:  "🔧 Output debug info",
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := application.ParseContext(cmd)
-		data, err := json.MarshalIndent(backpack, "", "  ")
+		appContext := application.ParseContext(cmd)
+		data, err := json.MarshalIndent(appContext, "", "  ")
 		if err != nil {
 			panic(err)
 		}

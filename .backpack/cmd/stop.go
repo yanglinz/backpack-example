@@ -11,11 +11,11 @@ var stopCmd = &cobra.Command{
 	Short: "🚏 Stop running processes",
 	Long:  "🚏 Stop running processes",
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := application.ParseContext(cmd)
+		appContext := application.ParseContext(cmd)
 
 		command := "docker-compose down"
 		shell := internal.GetCommand(command)
-		shell.Dir = backpack.Root
+		shell.Dir = appContext.Root
 		err := shell.Run()
 		if err != nil {
 			panic(err)

@@ -14,16 +14,16 @@ var buildCmd = &cobra.Command{
 	Short: "🛠  Build the docker images",
 	Long:  "🛠  Build the docker images",
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := application.ParseContext(cmd)
+		appContext := application.ParseContext(cmd)
 		prod, _ := cmd.Flags().GetBool("prod")
 
 		if prod {
 			os.Setenv("COMPOSE_FILE", "docker-compose-prod.yml")
 		}
-		development.CreateCertificates(backpack)
+		development.CreateCertificates(appContext)
 		command := "docker-compose build"
 		shell := internal.GetCommand(command)
-		shell.Dir = backpack.Root
+		shell.Dir = appContext.Root
 		err := shell.Run()
 		if err != nil {
 			panic(err)

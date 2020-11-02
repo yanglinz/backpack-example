@@ -12,30 +12,30 @@ import (
 	"github.com/yanglinz/backpack/internal"
 )
 
-func createSecretConfig(backpack application.Context) {
-	secretsPath := filepath.Join(backpack.Root, "terraform/secrets.tfvars")
+func createSecretConfig(appContext application.Context) {
+	secretsPath := filepath.Join(appContext.Root, "terraform/secrets.tfvars")
 	if !internal.Exists(secretsPath) {
-		sourcePath := filepath.Join(backpack.Root, ".backpack/terraform/root/secrets.tfvars")
+		sourcePath := filepath.Join(appContext.Root, ".backpack/terraform/root/secrets.tfvars")
 		internal.CopyFile(sourcePath, secretsPath)
 	}
 }
 
-func createMainConfig(backpack application.Context) {
+func createMainConfig(appContext application.Context) {
 	config := make(map[string]interface{})
 
 	// Define outermost module
 	modules := []interface{}{}
 
 	// Define main module
-	appContext := make(map[string]interface{})
-	appContext["app_name"] = backpack.Name
+	appModule := make(map[string]interface{})
+	appModule["app_name"] = appContext.Name
 
 	module := make(map[string]interface{})
 	module["source"] = "../.backpack/terraform/core-web-digitalocean"
-	module["app_context"] = appContext
+	module["app_context"] = appModule
 
 	moduleContainer := make(map[string]interface{})
-	moduleName := strcase.SnakeCase(backpack.Name + "_web")
+	moduleName := strcase.SnakeCase(appContext.Name + "_web")
 	moduleContainer[moduleName] = []interface{}{module}
 	modules = append(modules, moduleContainer)
 
@@ -54,16 +54,16 @@ func createMainConfig(backpack application.Context) {
 
 	// Write module to file
 	content, _ := json.MarshalIndent(config, "", "  ")
-	configPath := filepath.Join(backpack.Root, "terraform/main.tf.json")
+	configPath := filepath.Join(appContext.Root, "terraform/main.tf.json")
 	err := ioutil.WriteFile(configPath, []byte(content), 0666)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func createMetaConfig(backpack application.Context) {
-	sourcePath := filepath.Join(backpack.Root, ".backpack/terraform/root/meta.tf")
-	targetPath := filepath.Join(backpack.Root, "terraform/meta.tf")
+func createMetaConfig(appContext application.Context) {
+	sourcePath := filepath.Join(appContext.Root, ".backpack/terraform/root/meta.tf")
+	targetPath := filepath.Join(appContext.Root, "terraform/meta.tf")
 	content, err := ioutil.ReadFile(sourcePath)
 	if err != nil {
 		panic(err)
@@ -71,7 +71,7 @@ func createMetaConfig(backpack application.Context) {
 
 	output := string(content)
 	output = strings.ReplaceAll(output, "{{BACKPACK_DEFAULT_ORG}}", "yanglin")
-	output = strings.ReplaceAll(output, "{{BACKPACK_WORKSPACE}}", backpack.Name)
+	output = strings.ReplaceAll(output, "{{BACKPACK_WORKSPACE}}", appContext.Name)
 	err = ioutil.WriteFile(targetPath, []byte(output), 0644)
 	if err != nil {
 		panic(err)
@@ -79,11 +79,11 @@ func createMetaConfig(backpack application.Context) {
 }
 
 // CreateConfig generates the terraform config
-func CreateConfig(backpack application.Context) {
-	terraformDir := filepath.Join(backpack.Root, "terraform")
+func CreateConfig(appContext application.Context) {
+	terraformDir := filepath.Join(appContext.Root, "terraform")
 	os.MkdirAll(terraformDir, 0777)
 
-	createSecretConfig(backpack)
-	createMainConfig(backpack)
-	createMetaConfig(backpack)
+	createSecretConfig(appContext)
+	createMainConfig(appContext)
+	createMetaConfig(appContext)
 }

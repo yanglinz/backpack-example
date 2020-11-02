@@ -9,40 +9,40 @@ import (
 	"github.com/yanglinz/backpack/application"
 )
 
-func copyWorkflow(backpack application.Context, source string, target string) error {
+func copyWorkflow(appContext application.Context, source string, target string) error {
 	content, _ := ioutil.ReadFile(source)
 
 	workflow := string(content)
-	workflow = strings.ReplaceAll(workflow, "${{APP_NAME}}", backpack.Name)
-	workflow = strings.ReplaceAll(workflow, "${{RUNTIME_PLATFORM}}", backpack.Runtime)
-	workflow = strings.ReplaceAll(workflow, "${{GCP_PROJECT_ID}}", backpack.Google.ProjectID)
+	workflow = strings.ReplaceAll(workflow, "${{APP_NAME}}", appContext.Name)
+	workflow = strings.ReplaceAll(workflow, "${{RUNTIME_PLATFORM}}", appContext.Runtime)
+	workflow = strings.ReplaceAll(workflow, "${{GCP_PROJECT_ID}}", appContext.Google.ProjectID)
 
 	err := ioutil.WriteFile(target, []byte(workflow), 0644)
 	return err
 }
 
 // CreateWorkflows generate github actions configs
-func CreateWorkflows(backpack application.Context) {
-	workflowDir := filepath.Join(backpack.Root, ".github/workflows")
+func CreateWorkflows(appContext application.Context) {
+	workflowDir := filepath.Join(appContext.Root, ".github/workflows")
 	os.MkdirAll(workflowDir, 0777)
 
-	source := filepath.Join(backpack.Root, ".backpack/github/actions/main.yml")
-	target := filepath.Join(backpack.Root, ".github/workflows/main.yml")
-	err := copyWorkflow(backpack, source, target)
+	source := filepath.Join(appContext.Root, ".backpack/github/actions/main.yml")
+	target := filepath.Join(appContext.Root, ".github/workflows/main.yml")
+	err := copyWorkflow(appContext, source, target)
 	if err != nil {
 		panic(err)
 	}
 
-	source = filepath.Join(backpack.Root, ".backpack/github/actions/deployment.yml")
-	target = filepath.Join(backpack.Root, ".github/workflows/deployment.yml")
-	err = copyWorkflow(backpack, source, target)
+	source = filepath.Join(appContext.Root, ".backpack/github/actions/deployment.yml")
+	target = filepath.Join(appContext.Root, ".github/workflows/deployment.yml")
+	err = copyWorkflow(appContext, source, target)
 	if err != nil {
 		panic(err)
 	}
 
-	source = filepath.Join(backpack.Root, ".backpack/github/actions/infrastructure.yml")
-	target = filepath.Join(backpack.Root, ".github/workflows/infrastructure.yml")
-	err = copyWorkflow(backpack, source, target)
+	source = filepath.Join(appContext.Root, ".backpack/github/actions/infrastructure.yml")
+	target = filepath.Join(appContext.Root, ".github/workflows/infrastructure.yml")
+	err = copyWorkflow(appContext, source, target)
 	if err != nil {
 		panic(err)
 	}

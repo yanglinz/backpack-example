@@ -11,8 +11,8 @@ var shellCmd = &cobra.Command{
 	Short: "💻 Run docker shell",
 	Long:  "💻 Run docker shell",
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := application.ParseContext(cmd)
-		serviceName := backpack.Projects[0].Name + "_server"
+		appContext := application.ParseContext(cmd)
+		serviceName := appContext.Projects[0].Name + "_server"
 		shell := internal.GetCommand(
 			"docker-compose run " + serviceName + " .backpack/runtime/entry-shell.sh",
 		)

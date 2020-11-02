@@ -10,11 +10,11 @@ import (
 )
 
 // CreateCertificates generate self-signed certificates
-func CreateCertificates(backpack application.Context) {
-	certsDir := filepath.Join(backpack.Root, "etc/certs")
+func CreateCertificates(appContext application.Context) {
+	certsDir := filepath.Join(appContext.Root, "etc/certs")
 	os.MkdirAll(certsDir, 0777)
 
-	localDomain := backpack.Name + ".localhost"
+	localDomain := appContext.Name + ".localhost"
 	commandParts := []string{
 		"mkcert",
 		"-cert-file app-localhost.pem",

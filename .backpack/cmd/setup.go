@@ -13,8 +13,8 @@ import (
 	"github.com/yanglinz/backpack/terraform"
 )
 
-func setupSecrets(backpack application.Context) {
-	envDir := filepath.Join(backpack.Root, "etc")
+func setupSecrets(appContext application.Context) {
+	envDir := filepath.Join(appContext.Root, "etc")
 	os.Mkdir(envDir, 0777)
 }
 
@@ -25,19 +25,19 @@ var setupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		setupFiles, _ := cmd.Flags().GetBool("files")
 		setupResources, _ := cmd.Flags().GetBool("resources")
-		backpack := application.ParseContext(cmd)
+		appContext := application.ParseContext(cmd)
 
-		setupSecrets(backpack)
+		setupSecrets(appContext)
 
 		if setupFiles {
-			development.SetupTaskfileBin(backpack)
-			development.SetupTaskfile(backpack)
-			github.CreateWorkflows(backpack)
-			docker.CreateComposeConfig(backpack)
-			terraform.CreateConfig(backpack)
+			development.SetupTaskfileBin(appContext)
+			development.SetupTaskfile(appContext)
+			github.CreateWorkflows(appContext)
+			docker.CreateComposeConfig(appContext)
+			terraform.CreateConfig(appContext)
 		}
 		if setupResources {
-			google.BootstrapSecrets(backpack)
+			google.BootstrapSecrets(appContext)
 		}
 	},
 }

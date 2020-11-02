@@ -14,8 +14,8 @@ var terraformPlanCmd = &cobra.Command{
 	Long:  "Thin wrapper around terraform plan",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := application.ParseContext(cmd)
-		terraformDir := filepath.Join(backpack.Root, "terraform")
+		appContext := application.ParseContext(cmd)
+		terraformDir := filepath.Join(appContext.Root, "terraform")
 
 		// Run terraform init
 		shell := internal.GetCommand("terraform init")
@@ -41,8 +41,8 @@ var terraformApplyCmd = &cobra.Command{
 	Long:  "Thin wrapper around terraform apply",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := application.ParseContext(cmd)
-		terraformDir := filepath.Join(backpack.Root, "terraform")
+		appContext := application.ParseContext(cmd)
+		terraformDir := filepath.Join(appContext.Root, "terraform")
 
 		// Run terraform apply
 		shell := internal.GetCommand("terraform apply -var-file=secrets.tfvars")
@@ -69,8 +69,8 @@ var terraformDestroyCmd = &cobra.Command{
 	Long:  "Thin wrapper around terraform destory",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := application.ParseContext(cmd)
-		terraformDir := filepath.Join(backpack.Root, "terraform")
+		appContext := application.ParseContext(cmd)
+		terraformDir := filepath.Join(appContext.Root, "terraform")
 
 		// Run terraform apply
 		shell := internal.GetCommand("terraform destroy -var-file=secrets.tfvars")

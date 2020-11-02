@@ -14,21 +14,21 @@ var runCmd = &cobra.Command{
 	Short: "🐳 Run development server",
 	Long:  "🐳 Run development server",
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := application.ParseContext(cmd)
+		appContext := application.ParseContext(cmd)
 		prod, _ := cmd.Flags().GetBool("prod")
 
 		if prod {
 			os.Setenv("COMPOSE_FILE", "docker-compose-prod.yml")
 			command := "docker-compose up"
 			shell := internal.GetCommand(command)
-			shell.Dir = backpack.Root
+			shell.Dir = appContext.Root
 
 			err := shell.Run()
 			if err != nil {
 				panic(err)
 			}
 		} else {
-			development.RunTaskfile(backpack)
+			development.RunTaskfile(appContext)
 		}
 	},
 }

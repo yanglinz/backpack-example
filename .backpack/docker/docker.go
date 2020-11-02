@@ -45,11 +45,11 @@ func getStartCommand(bashCommands []string) string {
 	return "bash -c \"" + strings.Join(bashCommands, " \\\n && ") + "\""
 }
 
-func getDependentServices(backpack application.Context, req composeConfigRequest) map[string]interface{} {
+func getDependentServices(appContext application.Context, req composeConfigRequest) map[string]interface{} {
 	services := make(map[string]interface{})
 
 	// Add postgres to services
-	if backpack.Services.Postgres {
+	if appContext.Services.Postgres {
 		service := composeService{
 			Image: "postgres:11.6",
 			Environment: []string{
@@ -64,7 +64,7 @@ func getDependentServices(backpack application.Context, req composeConfigRequest
 	}
 
 	// Add redis to services
-	if backpack.Services.Redis {
+	if appContext.Services.Redis {
 		service := composeService{
 			Image: "redis:5.0.5",
 		}
@@ -74,7 +74,7 @@ func getDependentServices(backpack application.Context, req composeConfigRequest
 	return services
 }
 
-func getServerService(backpack application.Context, project application.ProjectInstance, req composeConfigRequest) (string, composeService) {
+func getServerService(appContext application.Context, project application.ProjectInstance, req composeConfigRequest) (string, composeService) {
 	dockerfile := ".backpack/docker/python-dev.Dockerfile"
 	if req.target == application.EnvProduction {
 		dockerfile = ".backpack/docker/python-prod.Dockerfile"
@@ -89,7 +89,7 @@ func getServerService(backpack application.Context, project application.ProjectI
 		startCommand = ".backpack/runtime/entry-prod.sh"
 	}
 	commands := []string{startCommand}
-	if backpack.Services.Postgres {
+	if appContext.Services.Postgres {
 		commands = []string{
 			".backpack/docker/scripts/wait-for-it.sh -t 60 postgres:5432",
 			".backpack/docker/scripts/wait-for-pg.sh",
@@ -119,10 +119,10 @@ func getServerService(backpack application.Context, project application.ProjectI
 	}
 
 	dependsOn := []string{}
-	if backpack.Services.Postgres {
+	if appContext.Services.Postgres {
 		dependsOn = append(dependsOn, "postgres")
 	}
-	if backpack.Services.Redis {
+	if appContext.Services.Redis {
 		dependsOn = append(dependsOn, "redis")
 	}
 
@@ -139,12 +139,12 @@ func getServerService(backpack application.Context, project application.ProjectI
 	return serviceName, service
 }
 
-func getServerServices(backpack application.Context, req composeConfigRequest) map[string]interface{} {
+func getServerServices(appContext application.Context, req composeConfigRequest) map[string]interface{} {
 	services := make(map[string]interface{})
 
 	// Add server services
-	for _, p := range backpack.Projects {
-		serviceName, service := getServerService(backpack, p, req)
+	for _, p := range appContext.Projects {
+		serviceName, service := getServerService(appContext, p, req)
 		services[serviceName] = service
 	}
 
@@ -152,17 +152,17 @@ func getServerServices(backpack application.Context, req composeConfigRequest) m
 }
 
 // GetComposeConfig creates a yaml map of docker-compose.yml
-func GetComposeConfig(backpack application.Context, req composeConfigRequest) ComposeConfig {
+func GetComposeConfig(appContext application.Context, req composeConfigRequest) ComposeConfig {
 	services := make(map[string]interface{})
 
 	// Get dependent services
-	dependentServices := getDependentServices(backpack, req)
+	dependentServices := getDependentServices(appContext, req)
 	for k, v := range dependentServices {
 		services[k] = v
 	}
 
 	// Get server services
-	serverServices := getServerServices(backpack, req)
+	serverServices := getServerServices(appContext, req)
 	for k, v := range serverServices {
 		services[k] = v
 	}
@@ -176,26 +176,26 @@ func GetComposeConfig(backpack application.Context, req composeConfigRequest) Co
 }
 
 // CreateComposeConfig creates the project docker-compose.yml
-func CreateComposeConfig(backpack application.Context) {
-	defaultConfig := GetComposeConfig(backpack, composeConfigRequest{
+func CreateComposeConfig(appContext application.Context) {
+	defaultConfig := GetComposeConfig(appContext, composeConfigRequest{
 		target: application.EnvDevelopment,
 	})
 	configYaml, _ := yaml.Marshal(defaultConfig)
 	content := strings.Join([]string{composeHeader, string(configYaml)}, "")
 
-	composePath := filepath.Join(backpack.Root, "docker-compose.yml")
+	composePath := filepath.Join(appContext.Root, "docker-compose.yml")
 	err := ioutil.WriteFile(composePath, []byte(content), 0644)
 	if err != nil {
 		panic(err)
 	}
 
-	prodConfig := GetComposeConfig(backpack, composeConfigRequest{
+	prodConfig := GetComposeConfig(appContext, composeConfigRequest{
 		target: application.EnvProduction,
 	})
 	configYaml, _ = yaml.Marshal(prodConfig)
 	content = strings.Join([]string{composeHeader, string(configYaml)}, "")
 
-	composePath = filepath.Join(backpack.Root, "docker-compose-prod.yml")
+	composePath = filepath.Join(appContext.Root, "docker-compose-prod.yml")
 	err = ioutil.WriteFile(composePath, []byte(content), 0644)
 	if err != nil {
 		panic(err)

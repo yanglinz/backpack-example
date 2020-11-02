@@ -33,39 +33,39 @@ func bucketExists(bucketName string) bool {
 	return false
 }
 
-func bootstrapBucket(backpack application.Context) {
+func bootstrapBucket(appContext application.Context) {
 	ctx := context.Background()
-	bucketName := namespacePrefix + backpack.Name
+	bucketName := namespacePrefix + appContext.Name
 	exists := bucketExists(bucketName)
 	if exists {
 		return
 	}
 
 	err := berglas.Bootstrap(ctx, &berglas.StorageBootstrapRequest{
-		ProjectID: backpack.Google.ProjectID,
+		ProjectID: appContext.Google.ProjectID,
 		Bucket:    bucketName,
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	CreateSecret(backpack, CreateSecretRequest{
+	CreateSecret(appContext, CreateSecretRequest{
 		Env:   application.EnvDevelopment,
 		Value: "{}",
 	})
-	CreateSecret(backpack, CreateSecretRequest{
+	CreateSecret(appContext, CreateSecretRequest{
 		Env:   application.EnvProduction,
 		Value: "{}",
 	})
 }
 
-func bootstrapServiceAccount(backpack application.Context) {
+func bootstrapServiceAccount(appContext application.Context) {
 	// Create service account to fetch secrets
-	serviceAccountName := namespacePrefixShort + backpack.Name
+	serviceAccountName := namespacePrefixShort + appContext.Name
 	parts := []string{
 		"gcloud iam service-accounts create",
 		serviceAccountName,
-		"--project", backpack.Google.ProjectID,
+		"--project", appContext.Google.ProjectID,
 	}
 	command := strings.Join(parts, " ")
 	shell := internal.GetCommand(command)
@@ -75,9 +75,9 @@ func bootstrapServiceAccount(backpack application.Context) {
 	serviceAccountEmail := fmt.Sprintf(
 		"serviceAccount:%s@%s.iam.gserviceaccount.com",
 		serviceAccountName,
-		backpack.Google.ProjectID,
+		appContext.Google.ProjectID,
 	)
-	bucketName := namespacePrefix + backpack.Name
+	bucketName := namespacePrefix + appContext.Name
 	grantKey := bucketName + "/" + secretName
 	parts = []string{
 		"berglas grant", grantKey,
@@ -91,7 +91,7 @@ func bootstrapServiceAccount(backpack application.Context) {
 	serviceAccountEmailGlobal := fmt.Sprintf(
 		"serviceAccount:%s@%s.iam.gserviceaccount.com",
 		"backpack-global-service",
-		backpack.Google.ProjectID,
+		appContext.Google.ProjectID,
 	)
 	parts = []string{
 		"berglas grant", grantKey,
@@ -103,9 +103,9 @@ func bootstrapServiceAccount(backpack application.Context) {
 }
 
 // BootstrapSecrets for berglas
-func BootstrapSecrets(backpack application.Context) {
-	bootstrapBucket(backpack)
-	bootstrapServiceAccount(backpack)
+func BootstrapSecrets(appContext application.Context) {
+	bootstrapBucket(appContext)
+	bootstrapServiceAccount(appContext)
 }
 
 // CreateSecretRequest params
@@ -115,8 +115,8 @@ type CreateSecretRequest struct {
 }
 
 // CreateSecret creates or updates a secret
-func CreateSecret(backpack application.Context, req CreateSecretRequest) {
-	bucketName := namespacePrefix + backpack.Name
+func CreateSecret(appContext application.Context, req CreateSecretRequest) {
+	bucketName := namespacePrefix + appContext.Name
 
 	name := secretNameDev
 	if req.Env == application.EnvProduction {
@@ -124,7 +124,7 @@ func CreateSecret(backpack application.Context, req CreateSecretRequest) {
 	}
 	bucketPath := bucketName + "/" + name
 
-	encryptionKey := "projects/" + backpack.Google.ProjectID + "/locations/global/keyRings/berglas/cryptoKeys/berglas-key"
+	encryptionKey := "projects/" + appContext.Google.ProjectID + "/locations/global/keyRings/berglas/cryptoKeys/berglas-key"
 	parts := []string{
 		"berglas create", bucketPath, req.Value,
 		"--key", encryptionKey,
@@ -144,8 +144,8 @@ type UpdateSecretRequest struct {
 }
 
 // UpdateSecrets updates the composite secrets
-func UpdateSecrets(backpack application.Context, req UpdateSecretRequest) {
-	bucketName := namespacePrefix + backpack.Name
+func UpdateSecrets(appContext application.Context, req UpdateSecretRequest) {
+	bucketName := namespacePrefix + appContext.Name
 
 	name := secretNameDev
 	if req.Env == application.EnvProduction {
@@ -153,7 +153,7 @@ func UpdateSecrets(backpack application.Context, req UpdateSecretRequest) {
 	}
 	bucketPath := bucketName + "/" + name
 	encodedValue := base64.StdEncoding.EncodeToString([]byte(req.Value))
-	encryptionKey := "projects/" + backpack.Google.ProjectID + "/locations/global/keyRings/berglas/cryptoKeys/berglas-key"
+	encryptionKey := "projects/" + appContext.Google.ProjectID + "/locations/global/keyRings/berglas/cryptoKeys/berglas-key"
 	parts := []string{
 		"berglas update", bucketPath, encodedValue,
 		"--key", encryptionKey,
@@ -167,8 +167,8 @@ func UpdateSecrets(backpack application.Context, req UpdateSecretRequest) {
 }
 
 // GetSecrets fetches the composite secrets
-func GetSecrets(backpack application.Context, env string) string {
-	bucketName := namespacePrefix + backpack.Name
+func GetSecrets(appContext application.Context, env string) string {
+	bucketName := namespacePrefix + appContext.Name
 
 	name := secretNameDev
 	if env == application.EnvProduction {
