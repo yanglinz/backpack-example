@@ -1,4 +1,4 @@
-package heroku
+package secrets
 
 import (
 	"strings"
