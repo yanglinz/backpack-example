@@ -3,8 +3,7 @@ name: Main
 on: [push]
 
 jobs:
-  # Build the cli and test project setup
-  backpack_build:
+  build_backpack:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main'
     steps:
@@ -15,8 +14,7 @@ jobs:
       - uses: ./.backpack/delivery/actions/app-context-action
       - run: .backpack/delivery/test-backpack.sh
 
-  # Build and test frontend JS and CSS assets
-  frontend_build:
+  build_frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -33,11 +31,10 @@ jobs:
       - run: yarn run build
       - uses: actions/upload-artifact@v1
         with:
-          name: frontend-assets
+          name: frontend-artifact
           path: build
 
-  # Build and test backend python
-  server_build:
+  build_server:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main'
     steps:
@@ -46,16 +43,15 @@ jobs:
       - run: docker-compose build
       - run: docker-compose run "$BACKPACK_DOCKER_SERVICE_NAME" .backpack/delivery/test-server.sh
 
-  # Build and publish docker artifact
-  release_build:
+  release:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: frontend_build
+    needs: build_frontend
     steps:
       - uses: actions/checkout@v1
       - uses: actions/download-artifact@v1
         with:
-          name: frontend-assets
+          name: frontend-artifact
           path: build
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
