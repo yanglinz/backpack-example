@@ -5,15 +5,15 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/development"
 	"github.com/yanglinz/backpack/docker"
 	"github.com/yanglinz/backpack/github"
 	"github.com/yanglinz/backpack/google"
-	"github.com/yanglinz/backpack/internal"
 	"github.com/yanglinz/backpack/terraform"
 )
 
-func setupSecrets(backpack internal.Context) {
+func setupSecrets(backpack application.Context) {
 	envDir := filepath.Join(backpack.Root, "etc")
 	os.Mkdir(envDir, 0777)
 }
@@ -25,7 +25,7 @@ var setupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		setupFiles, _ := cmd.Flags().GetBool("files")
 		setupResources, _ := cmd.Flags().GetBool("resources")
-		backpack := internal.ParseContext(cmd)
+		backpack := application.ParseContext(cmd)
 
 		setupSecrets(backpack)
 

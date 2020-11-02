@@ -33,7 +33,7 @@ func bucketExists(bucketName string) bool {
 	return false
 }
 
-func bootstrapBucket(backpack internal.Context) {
+func bootstrapBucket(backpack application.Context) {
 	ctx := context.Background()
 	bucketName := namespacePrefix + backpack.Name
 	exists := bucketExists(bucketName)
@@ -59,7 +59,7 @@ func bootstrapBucket(backpack internal.Context) {
 	})
 }
 
-func bootstrapServiceAccount(backpack internal.Context) {
+func bootstrapServiceAccount(backpack application.Context) {
 	// Create service account to fetch secrets
 	serviceAccountName := namespacePrefixShort + backpack.Name
 	parts := []string{
@@ -103,7 +103,7 @@ func bootstrapServiceAccount(backpack internal.Context) {
 }
 
 // BootstrapSecrets for berglas
-func BootstrapSecrets(backpack internal.Context) {
+func BootstrapSecrets(backpack application.Context) {
 	bootstrapBucket(backpack)
 	bootstrapServiceAccount(backpack)
 }
@@ -115,7 +115,7 @@ type CreateSecretRequest struct {
 }
 
 // CreateSecret creates or updates a secret
-func CreateSecret(backpack internal.Context, req CreateSecretRequest) {
+func CreateSecret(backpack application.Context, req CreateSecretRequest) {
 	bucketName := namespacePrefix + backpack.Name
 
 	name := secretNameDev
@@ -144,7 +144,7 @@ type UpdateSecretRequest struct {
 }
 
 // UpdateSecrets updates the composite secrets
-func UpdateSecrets(backpack internal.Context, req UpdateSecretRequest) {
+func UpdateSecrets(backpack application.Context, req UpdateSecretRequest) {
 	bucketName := namespacePrefix + backpack.Name
 
 	name := secretNameDev
@@ -167,7 +167,7 @@ func UpdateSecrets(backpack internal.Context, req UpdateSecretRequest) {
 }
 
 // GetSecrets fetches the composite secrets
-func GetSecrets(backpack internal.Context, env string) string {
+func GetSecrets(backpack application.Context, env string) string {
 	bucketName := namespacePrefix + backpack.Name
 
 	name := secretNameDev

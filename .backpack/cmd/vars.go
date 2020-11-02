@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/google"
-	"github.com/yanglinz/backpack/internal"
 )
 
 var varsGetCmd = &cobra.Command{
@@ -18,7 +17,7 @@ var varsGetCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
-		backpack := internal.ParseContext(cmd)
+		backpack := application.ParseContext(cmd)
 		secret := google.GetSecrets(backpack, env)
 
 		fmt.Println(string(secret))
@@ -33,7 +32,7 @@ var varsPutCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
 		file, _ := cmd.Flags().GetString("file")
-		backpack := internal.ParseContext(cmd)
+		backpack := application.ParseContext(cmd)
 
 		envFile := filepath.Join(backpack.Root, file)
 		envData, err := ioutil.ReadFile(envFile)

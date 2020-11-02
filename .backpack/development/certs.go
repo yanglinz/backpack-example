@@ -5,11 +5,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/internal"
 )
 
 // CreateCertificates generate self-signed certificates
-func CreateCertificates(backpack internal.Context) {
+func CreateCertificates(backpack application.Context) {
 	certsDir := filepath.Join(backpack.Root, "etc/certs")
 	os.MkdirAll(certsDir, 0777)
 

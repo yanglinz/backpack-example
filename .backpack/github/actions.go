@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/application"
 )
 
-func copyWorkflow(backpack internal.Context, source string, target string) error {
+func copyWorkflow(backpack application.Context, source string, target string) error {
 	content, _ := ioutil.ReadFile(source)
 
 	workflow := string(content)
@@ -22,7 +22,7 @@ func copyWorkflow(backpack internal.Context, source string, target string) error
 }
 
 // CreateWorkflows generate github actions configs
-func CreateWorkflows(backpack internal.Context) {
+func CreateWorkflows(backpack application.Context) {
 	workflowDir := filepath.Join(backpack.Root, ".github/workflows")
 	os.MkdirAll(workflowDir, 0777)
 

@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/internal"
 )
 
@@ -13,7 +14,7 @@ var terraformPlanCmd = &cobra.Command{
 	Long:  "Thin wrapper around terraform plan",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
+		backpack := application.ParseContext(cmd)
 		terraformDir := filepath.Join(backpack.Root, "terraform")
 
 		// Run terraform init
@@ -40,7 +41,7 @@ var terraformApplyCmd = &cobra.Command{
 	Long:  "Thin wrapper around terraform apply",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
+		backpack := application.ParseContext(cmd)
 		terraformDir := filepath.Join(backpack.Root, "terraform")
 
 		// Run terraform apply
@@ -68,7 +69,7 @@ var terraformDestroyCmd = &cobra.Command{
 	Long:  "Thin wrapper around terraform destory",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
+		backpack := application.ParseContext(cmd)
 		terraformDir := filepath.Join(backpack.Root, "terraform")
 
 		// Run terraform apply

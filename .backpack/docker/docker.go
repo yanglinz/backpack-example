@@ -7,7 +7,6 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"github.com/yanglinz/backpack/application"
-	"github.com/yanglinz/backpack/internal"
 )
 
 var composeHeader = `# @backpack
@@ -46,7 +45,7 @@ func getStartCommand(bashCommands []string) string {
 	return "bash -c \"" + strings.Join(bashCommands, " \\\n && ") + "\""
 }
 
-func getDependentServices(backpack internal.Context, req composeConfigRequest) map[string]interface{} {
+func getDependentServices(backpack application.Context, req composeConfigRequest) map[string]interface{} {
 	services := make(map[string]interface{})
 
 	// Add postgres to services
@@ -75,7 +74,7 @@ func getDependentServices(backpack internal.Context, req composeConfigRequest) m
 	return services
 }
 
-func getServerService(backpack internal.Context, project internal.Project, req composeConfigRequest) (string, composeService) {
+func getServerService(backpack application.Context, project application.Project, req composeConfigRequest) (string, composeService) {
 	dockerfile := ".backpack/docker/python-dev.Dockerfile"
 	if req.target == application.EnvProduction {
 		dockerfile = ".backpack/docker/python-prod.Dockerfile"
@@ -140,7 +139,7 @@ func getServerService(backpack internal.Context, project internal.Project, req c
 	return serviceName, service
 }
 
-func getServerServices(backpack internal.Context, req composeConfigRequest) map[string]interface{} {
+func getServerServices(backpack application.Context, req composeConfigRequest) map[string]interface{} {
 	services := make(map[string]interface{})
 
 	// Add server services
@@ -153,7 +152,7 @@ func getServerServices(backpack internal.Context, req composeConfigRequest) map[
 }
 
 // GetComposeConfig creates a yaml map of docker-compose.yml
-func GetComposeConfig(backpack internal.Context, req composeConfigRequest) ComposeConfig {
+func GetComposeConfig(backpack application.Context, req composeConfigRequest) ComposeConfig {
 	services := make(map[string]interface{})
 
 	// Get dependent services
@@ -177,7 +176,7 @@ func GetComposeConfig(backpack internal.Context, req composeConfigRequest) Compo
 }
 
 // CreateComposeConfig creates the project docker-compose.yml
-func CreateComposeConfig(backpack internal.Context) {
+func CreateComposeConfig(backpack application.Context) {
 	defaultConfig := GetComposeConfig(backpack, composeConfigRequest{
 		target: application.EnvDevelopment,
 	})

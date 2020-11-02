@@ -8,10 +8,11 @@ import (
 	"strings"
 
 	"github.com/stoewer/go-strcase"
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/internal"
 )
 
-func createSecretConfig(backpack internal.Context) {
+func createSecretConfig(backpack application.Context) {
 	secretsPath := filepath.Join(backpack.Root, "terraform/secrets.tfvars")
 	if !internal.Exists(secretsPath) {
 		sourcePath := filepath.Join(backpack.Root, ".backpack/terraform/root/secrets.tfvars")
@@ -19,7 +20,7 @@ func createSecretConfig(backpack internal.Context) {
 	}
 }
 
-func createMainConfig(backpack internal.Context) {
+func createMainConfig(backpack application.Context) {
 	config := make(map[string]interface{})
 
 	// Define outermost module
@@ -60,7 +61,7 @@ func createMainConfig(backpack internal.Context) {
 	}
 }
 
-func createMetaConfig(backpack internal.Context) {
+func createMetaConfig(backpack application.Context) {
 	sourcePath := filepath.Join(backpack.Root, ".backpack/terraform/root/meta.tf")
 	targetPath := filepath.Join(backpack.Root, "terraform/meta.tf")
 	content, err := ioutil.ReadFile(sourcePath)
@@ -78,7 +79,7 @@ func createMetaConfig(backpack internal.Context) {
 }
 
 // CreateConfig generates the terraform config
-func CreateConfig(backpack internal.Context) {
+func CreateConfig(backpack application.Context) {
 	terraformDir := filepath.Join(backpack.Root, "terraform")
 	os.MkdirAll(terraformDir, 0777)
 

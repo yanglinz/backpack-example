@@ -5,11 +5,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/internal"
 )
 
 // SetupTaskfileBin generates taskfile binary
-func SetupTaskfileBin(backpack internal.Context) {
+func SetupTaskfileBin(backpack application.Context) {
 	binDir := filepath.Join(backpack.Root, "bin")
 	binPath := filepath.Join(binDir, "task")
 	if internal.Exists(binPath) {
@@ -27,7 +28,7 @@ func SetupTaskfileBin(backpack internal.Context) {
 }
 
 // SetupTaskfile generates the taskfile config
-func SetupTaskfile(backpack internal.Context) {
+func SetupTaskfile(backpack application.Context) {
 	target := ".backpack/development/Taskfile.yml"
 	symlink := filepath.Join(backpack.Root, "Taskfile.yml")
 	os.Remove(symlink)
@@ -38,7 +39,7 @@ func SetupTaskfile(backpack internal.Context) {
 }
 
 // RunTaskfile runs the development server
-func RunTaskfile(backpack internal.Context) {
+func RunTaskfile(backpack application.Context) {
 	shell := internal.GetCommand("bin/task -p server ui")
 	shell.Dir = backpack.Root
 	shell.Run()

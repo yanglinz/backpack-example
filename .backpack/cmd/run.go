@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/development"
 	"github.com/yanglinz/backpack/internal"
 )
@@ -13,7 +14,7 @@ var runCmd = &cobra.Command{
 	Short: "🐳 Run development server",
 	Long:  "🐳 Run development server",
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
+		backpack := application.ParseContext(cmd)
 		prod, _ := cmd.Flags().GetBool("prod")
 
 		if prod {

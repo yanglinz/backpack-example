@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/application"
 )
 
 var debugCmd = &cobra.Command{
@@ -13,7 +13,7 @@ var debugCmd = &cobra.Command{
 	Short: "🔧 Output debug info",
 	Long:  "🔧 Output debug info",
 	Run: func(cmd *cobra.Command, args []string) {
-		backpack := internal.ParseContext(cmd)
+		backpack := application.ParseContext(cmd)
 		data, err := json.MarshalIndent(backpack, "", "  ")
 		if err != nil {
 			panic(err)
