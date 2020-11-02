@@ -9,7 +9,7 @@ import (
 	"github.com/yanglinz/backpack/development"
 	"github.com/yanglinz/backpack/docker"
 	"github.com/yanglinz/backpack/github"
-	"github.com/yanglinz/backpack/google"
+	"github.com/yanglinz/backpack/secrets"
 	"github.com/yanglinz/backpack/terraform"
 )
 
@@ -37,7 +37,7 @@ var setupCmd = &cobra.Command{
 			terraform.CreateConfig(appContext)
 		}
 		if setupResources {
-			google.BootstrapSecrets(appContext)
+			secrets.BootstrapSecrets(appContext)
 		}
 	},
 }

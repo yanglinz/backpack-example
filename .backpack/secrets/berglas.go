@@ -1,4 +1,4 @@
-package google
+package secrets
 
 import (
 	"context"

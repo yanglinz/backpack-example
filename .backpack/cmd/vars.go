@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yanglinz/backpack/application"
-	"github.com/yanglinz/backpack/google"
+	"github.com/yanglinz/backpack/secrets"
 )
 
 var varsGetCmd = &cobra.Command{
@@ -18,7 +18,7 @@ var varsGetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
 		appContext := application.ParseContext(cmd)
-		secret := google.GetSecrets(appContext, env)
+		secret := secrets.GetSecrets(appContext, env)
 
 		fmt.Println(string(secret))
 	},
@@ -40,7 +40,7 @@ var varsPutCmd = &cobra.Command{
 			panic(err)
 		}
 
-		google.UpdateSecrets(appContext, google.UpdateSecretRequest{
+		secrets.UpdateSecrets(appContext, secrets.UpdateSecretRequest{
 			Env:   env,
 			Value: string(envData),
 		})
