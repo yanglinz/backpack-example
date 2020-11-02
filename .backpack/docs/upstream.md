@@ -1,6 +1,6 @@
 # Managing Upstream Subtree
 
-This document describes how to update and reconcile the backpack git subtree.
+This document describes how to update and reconcile the `.backpack` git subtree.
 
 ## Detecting Drift
 
