@@ -74,7 +74,7 @@ func getDependentServices(backpack application.Context, req composeConfigRequest
 	return services
 }
 
-func getServerService(backpack application.Context, project application.Project, req composeConfigRequest) (string, composeService) {
+func getServerService(backpack application.Context, project application.ProjectInstance, req composeConfigRequest) (string, composeService) {
 	dockerfile := ".backpack/docker/python-dev.Dockerfile"
 	if req.target == application.EnvProduction {
 		dockerfile = ".backpack/docker/python-prod.Dockerfile"

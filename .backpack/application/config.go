@@ -10,8 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Project defines a domain-reachable app
-type Project struct {
+// ProjectInstance defines a domain-reachable app
+type ProjectInstance struct {
 	Path string
 	Name string
 }
@@ -25,7 +25,7 @@ type Services struct {
 type contextYaml struct {
 	Name     string
 	Runtime  string
-	Projects []Project
+	Projects []ProjectInstance
 	Services Services
 }
 
@@ -45,7 +45,7 @@ type Context struct {
 	Root     string
 	Name     string
 	Runtime  string
-	Projects []Project
+	Projects []ProjectInstance
 	Services Services
 	Google   contextGoogle
 	Heroku   contextHeroku
