@@ -2,6 +2,7 @@
 bin/task
 etc/certs
 etc/ansible/hosts
+etc/*.json
 static-django/
 
 # Terraform
@@ -19,6 +20,7 @@ build/
 staticfiles
 .env
 *.sqlite3
+.hypothesis
 
 # Build
 dist/
