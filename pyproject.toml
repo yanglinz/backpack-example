@@ -1,0 +1,25 @@
+[project]
+name = "backpack-example"
+
+[tool.poetry]
+name = "edient"
+version = "0.1.0"
+description = ""
+authors = []
+
+[tool.poetry.dependencies]
+python = "3.7.*"
+django = "*"
+requests = "*"
+psycopg2-binary = "*"
+uwsgi = "^2.0.19"
+
+[tool.poetry.dev-dependencies]
+pywatchman = "*"
+pytest = "*"
+pytest-django = "*"
+remote-pdb = "*"
+ptvsd = "*"
+black = "20.8b1"
+hypothesis = "5.37.4"
+isort = "^5.6.4"
