@@ -9,7 +9,7 @@ import (
 	"cloud.google.com/go/storage"
 	"github.com/GoogleCloudPlatform/berglas/pkg/berglas"
 	"github.com/yanglinz/backpack/application"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/execution"
 )
 
 const namespacePrefix = "backpack-berglas-"
@@ -68,7 +68,7 @@ func bootstrapServiceAccount(appContext application.Context) {
 		"--project", appContext.Google.ProjectID,
 	}
 	command := strings.Join(parts, " ")
-	shell := internal.GetCommand(command)
+	shell := execution.GetCommand(command)
 	shell.Run()
 
 	// Grant service account access to secrets
@@ -84,7 +84,7 @@ func bootstrapServiceAccount(appContext application.Context) {
 		"--member", serviceAccountEmail,
 	}
 	command = strings.Join(parts, " ")
-	shell = internal.GetCommand(command)
+	shell = execution.GetCommand(command)
 	shell.Run()
 
 	// Grant the global service account
@@ -98,7 +98,7 @@ func bootstrapServiceAccount(appContext application.Context) {
 		"--member", serviceAccountEmailGlobal,
 	}
 	command = strings.Join(parts, " ")
-	shell = internal.GetCommand(command)
+	shell = execution.GetCommand(command)
 	shell.Run()
 }
 
@@ -130,7 +130,7 @@ func CreateSecret(appContext application.Context, req CreateSecretRequest) {
 		"--key", encryptionKey,
 	}
 	command := strings.Join(parts, " ")
-	shell := internal.GetCommand(command)
+	shell := execution.GetCommand(command)
 	err := shell.Run()
 	if err != nil {
 		panic(err)
@@ -159,7 +159,7 @@ func UpdateSecrets(appContext application.Context, req UpdateSecretRequest) {
 		"--key", encryptionKey,
 	}
 	command := strings.Join(parts, " ")
-	shell := internal.GetCommand(command)
+	shell := execution.GetCommand(command)
 	err := shell.Run()
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func GetSecrets(appContext application.Context, env string) string {
 	bucketPath := bucketName + "/" + name
 	parts := []string{"berglas access", bucketPath}
 	command := strings.Join(parts, " ")
-	shell := internal.GetCommand(command)
+	shell := execution.GetCommand(command)
 	shell.Stdout = nil
 	out, err := shell.Output()
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/yanglinz/backpack/application"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/execution"
 )
 
 // CreateCertificates generate self-signed certificates
@@ -22,7 +22,7 @@ func CreateCertificates(appContext application.Context) {
 		localDomain,
 	}
 	command := strings.Join(commandParts, " ")
-	shell := internal.GetCommand(command)
+	shell := execution.GetCommand(command)
 	shell.Dir = certsDir
 	err := shell.Run()
 	if err != nil {

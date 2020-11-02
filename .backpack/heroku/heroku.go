@@ -3,7 +3,7 @@ package heroku
 import (
 	"strings"
 
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/execution"
 )
 
 // PutSecretRequest params
@@ -21,7 +21,7 @@ func PutSecret(req PutSecretRequest) {
 		"-a", req.App,
 	}
 	command := strings.Join(parts, " ")
-	shell := internal.GetCommand(command)
+	shell := execution.GetCommand(command)
 	err := shell.Run()
 	if err != nil {
 		panic(err)

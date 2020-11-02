@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yanglinz/backpack/application"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/execution"
 )
 
 var terraformPlanCmd = &cobra.Command{
@@ -18,7 +18,7 @@ var terraformPlanCmd = &cobra.Command{
 		terraformDir := filepath.Join(appContext.Root, "terraform")
 
 		// Run terraform init
-		shell := internal.GetCommand("terraform init")
+		shell := execution.GetCommand("terraform init")
 		shell.Dir = terraformDir
 		err := shell.Run()
 		if err != nil {
@@ -26,7 +26,7 @@ var terraformPlanCmd = &cobra.Command{
 		}
 
 		// Run terraform plan
-		shell = internal.GetCommand("terraform plan -var-file=secrets.tfvars")
+		shell = execution.GetCommand("terraform plan -var-file=secrets.tfvars")
 		shell.Dir = terraformDir
 		err = shell.Run()
 		if err != nil {
@@ -45,7 +45,7 @@ var terraformApplyCmd = &cobra.Command{
 		terraformDir := filepath.Join(appContext.Root, "terraform")
 
 		// Run terraform apply
-		shell := internal.GetCommand("terraform apply -var-file=secrets.tfvars")
+		shell := execution.GetCommand("terraform apply -var-file=secrets.tfvars")
 		shell.Dir = terraformDir
 		err := shell.Run()
 		if err != nil {
@@ -54,7 +54,7 @@ var terraformApplyCmd = &cobra.Command{
 
 		// Get output
 		// TODO: Create Ansible inventory from this output
-		shell = internal.GetCommand("terraform output")
+		shell = execution.GetCommand("terraform output")
 		shell.Dir = terraformDir
 		err = shell.Run()
 		if err != nil {
@@ -73,7 +73,7 @@ var terraformDestroyCmd = &cobra.Command{
 		terraformDir := filepath.Join(appContext.Root, "terraform")
 
 		// Run terraform apply
-		shell := internal.GetCommand("terraform destroy -var-file=secrets.tfvars")
+		shell := execution.GetCommand("terraform destroy -var-file=secrets.tfvars")
 		shell.Dir = terraformDir
 		err := shell.Run()
 		if err != nil {

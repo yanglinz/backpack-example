@@ -6,14 +6,15 @@ import (
 	"strings"
 
 	"github.com/yanglinz/backpack/application"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/execution"
+	"github.com/yanglinz/backpack/io/filesystem"
 )
 
 // SetupTaskfileBin generates taskfile binary
 func SetupTaskfileBin(appContext application.Context) {
 	binDir := filepath.Join(appContext.Root, "bin")
 	binPath := filepath.Join(binDir, "task")
-	if internal.Exists(binPath) {
+	if filesystem.Exists(binPath) {
 		return
 	}
 
@@ -22,7 +23,7 @@ func SetupTaskfileBin(appContext application.Context) {
 		"-b", binDir,
 	}
 	command := strings.Join(parts, " ")
-	shell := internal.GetCommand(command)
+	shell := execution.GetCommand(command)
 	shell.Dir = appContext.Root
 	shell.Run()
 }
@@ -40,7 +41,7 @@ func SetupTaskfile(appContext application.Context) {
 
 // RunTaskfile runs the development server
 func RunTaskfile(appContext application.Context) {
-	shell := internal.GetCommand("bin/task -p server ui")
+	shell := execution.GetCommand("bin/task -p server ui")
 	shell.Dir = appContext.Root
 	shell.Run()
 }

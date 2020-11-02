@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/development"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/execution"
 )
 
 var runCmd = &cobra.Command{
@@ -20,7 +20,7 @@ var runCmd = &cobra.Command{
 		if prod {
 			os.Setenv("COMPOSE_FILE", "docker-compose-prod.yml")
 			command := "docker-compose up"
-			shell := internal.GetCommand(command)
+			shell := execution.GetCommand(command)
 			shell.Dir = appContext.Root
 
 			err := shell.Run()

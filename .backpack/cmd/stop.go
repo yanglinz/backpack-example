@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/yanglinz/backpack/application"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/execution"
 )
 
 var stopCmd = &cobra.Command{
@@ -14,7 +14,7 @@ var stopCmd = &cobra.Command{
 		appContext := application.ParseContext(cmd)
 
 		command := "docker-compose down"
-		shell := internal.GetCommand(command)
+		shell := execution.GetCommand(command)
 		shell.Dir = appContext.Root
 		err := shell.Run()
 		if err != nil {

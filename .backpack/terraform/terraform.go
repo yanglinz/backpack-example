@@ -9,14 +9,14 @@ import (
 
 	"github.com/stoewer/go-strcase"
 	"github.com/yanglinz/backpack/application"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/filesystem"
 )
 
 func createSecretConfig(appContext application.Context) {
 	secretsPath := filepath.Join(appContext.Root, "terraform/secrets.tfvars")
-	if !internal.Exists(secretsPath) {
+	if !filesystem.Exists(secretsPath) {
 		sourcePath := filepath.Join(appContext.Root, ".backpack/terraform/root/secrets.tfvars")
-		internal.CopyFile(sourcePath, secretsPath)
+		filesystem.CopyFile(sourcePath, secretsPath)
 	}
 }
 

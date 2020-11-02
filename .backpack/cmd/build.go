@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/yanglinz/backpack/application"
 	"github.com/yanglinz/backpack/development"
-	"github.com/yanglinz/backpack/internal"
+	"github.com/yanglinz/backpack/io/execution"
 )
 
 var buildCmd = &cobra.Command{
@@ -22,7 +22,7 @@ var buildCmd = &cobra.Command{
 		}
 		development.CreateCertificates(appContext)
 		command := "docker-compose build"
-		shell := internal.GetCommand(command)
+		shell := execution.GetCommand(command)
 		shell.Dir = appContext.Root
 		err := shell.Run()
 		if err != nil {
