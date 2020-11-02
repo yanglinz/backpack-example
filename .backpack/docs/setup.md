@@ -6,7 +6,7 @@ First, add the backpack subtree:
 
 ```sh
 git remote add -f backpack git@github.com:yanglinz/backpack.git
-git subtree pull --prefix=.backpack backpack master --squash
+git subtree add --prefix=.backpack backpack master --squash
 ```
 
 Then, we can create relevant files by running:

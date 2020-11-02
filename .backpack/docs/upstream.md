@@ -1,6 +1,6 @@
 # Managing Upstream Subtree
 
-This document describes how to update and reconcile the backpack git subtree.
+This document describes how to update and reconcile the `.backpack` git subtree.
 
 ## Detecting Drift
 
@@ -10,7 +10,7 @@ directory and the upstream backpack repo, we can run the following commands:
 ```sh
 git remote add -f backpack git@github.com:yanglinz/backpack.git
 git fetch backpack
-git diff backpack/master master:.backpack/
+git diff backpack/main main:.backpack/
 ```
 
 ## Updating Backpack
@@ -28,7 +28,7 @@ git subtree pull --prefix=.backpack backpack master --squash
 > diff-ing when pulling and pushing, it's important to avoid anything that may
 > modify commit messages, like github's "squash" feature. When in doubt, keep
 > subtree modifications in its own atomic commit and push directly to the main
-> line `master` branch.
+> line `main` branch.
 
 ## Pushing to Upstream Backpack
 
