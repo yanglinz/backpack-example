@@ -5,7 +5,7 @@ on: [push]
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main-disabled'
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-go@v1
@@ -19,24 +19,24 @@ jobs:
       - uses: ./.backpack/delivery/actions/app-context-action
 
       # Run terraform
-      - run: .backpack/delivery/install-terraform.sh
-      - run: .backpack/delivery/terraform-plan.sh
+      - run: .backpack/delivery/actions/install-terraform.sh
+      - run: .backpack/delivery/actions/terraform-plan.sh
         env:
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
           TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-      - run: .backpack/delivery/terraform-apply.sh
+      - run: .backpack/delivery/actions/terraform-apply.sh
         env:
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
           TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       # Run deployment script
-      - run: .backpack/delivery/install-berglas.sh
-      - run: .backpack/delivery/build-release.sh
+      - run: .backpack/delivery/actions/install-berglas.sh
+      - run: .backpack/delivery/actions/build-release.sh
         env:
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
-      - run: .backpack/delivery/setup-ansible.sh
+      - run: .backpack/delivery/actions/setup-ansible.sh
         env:
           DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
       - run: |
