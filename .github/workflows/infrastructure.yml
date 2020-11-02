@@ -11,7 +11,7 @@ jobs:
         with:
           version: "270.0.0"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-      - uses: ./.backpack/delivery/actions/set-env
+      - uses: ./.backpack/delivery/actions/app-context-action
 
       # Run terraform
       - run: .backpack/delivery/install-terraform.sh
