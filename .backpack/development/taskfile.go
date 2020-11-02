@@ -19,7 +19,7 @@ func SetupTaskfileBin(appContext application.Context) {
 	}
 
 	parts := []string{
-		filepath.Join(appContext.Root, ".backpack/bin/install-taskfile"),
+		filepath.Join(appContext.Root, ".backpack/bin/install-taskfile.sh"),
 		"-b", binDir,
 	}
 	command := strings.Join(parts, " ")
