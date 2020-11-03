@@ -63,4 +63,8 @@ jobs:
       - run: .backpack/delivery/actions/install-terraform.sh
       - run: .backpack/delivery/actions/deploy-release.sh
         env:
+          DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
