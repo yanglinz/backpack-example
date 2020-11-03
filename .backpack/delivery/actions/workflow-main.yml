@@ -27,7 +27,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - run: yarn install
-      - run: yarn run build
+      - run: .backpack/delivery/actions/test-frontend.sh
       - uses: actions/upload-artifact@v1
         with:
           name: frontend-artifact
@@ -58,7 +58,13 @@ jobs:
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
       - uses: ./.backpack/delivery/actions/app-context-action
+      - run: .backpack/delivery/actions/install-ansible.sh
       - run: .backpack/delivery/actions/install-berglas.sh
-      - run: .backpack/delivery/actions/build-release.sh
+      - run: .backpack/delivery/actions/install-terraform.sh
+      - run: .backpack/delivery/actions/deploy-release.sh
         env:
+          DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}

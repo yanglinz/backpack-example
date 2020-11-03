@@ -32,11 +32,4 @@ func CreateWorkflows(appContext application.Context) {
 	if err != nil {
 		panic(err)
 	}
-
-	source = filepath.Join(appContext.Root, ".backpack/delivery/actions/workflow-deployment.yml")
-	target = filepath.Join(appContext.Root, ".github/workflows/deployment.yml")
-	err = copyWorkflow(appContext, source, target)
-	if err != nil {
-		panic(err)
-	}
 }
