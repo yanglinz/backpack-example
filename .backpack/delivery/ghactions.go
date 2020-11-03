@@ -26,23 +26,9 @@ func CreateWorkflows(appContext application.Context) {
 	workflowDir := filepath.Join(appContext.Root, ".github/workflows")
 	os.MkdirAll(workflowDir, 0777)
 
-	source := filepath.Join(appContext.Root, ".backpack/delivery/actions/main.yml")
+	source := filepath.Join(appContext.Root, ".backpack/delivery/actions/workflow-main.yml")
 	target := filepath.Join(appContext.Root, ".github/workflows/main.yml")
 	err := copyWorkflow(appContext, source, target)
-	if err != nil {
-		panic(err)
-	}
-
-	source = filepath.Join(appContext.Root, ".backpack/delivery/actions/deployment.yml")
-	target = filepath.Join(appContext.Root, ".github/workflows/deployment.yml")
-	err = copyWorkflow(appContext, source, target)
-	if err != nil {
-		panic(err)
-	}
-
-	source = filepath.Join(appContext.Root, ".backpack/delivery/actions/infrastructure.yml")
-	target = filepath.Join(appContext.Root, ".github/workflows/infrastructure.yml")
-	err = copyWorkflow(appContext, source, target)
 	if err != nil {
 		panic(err)
 	}

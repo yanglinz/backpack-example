@@ -3,8 +3,7 @@ name: Main
 on: [push]
 
 jobs:
-  # Build the cli and test project setup
-  backpack_build:
+  build_backpack:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main'
     steps:
@@ -13,10 +12,9 @@ jobs:
           go-version: 1.13.8
       - uses: actions/checkout@v1
       - uses: ./.backpack/delivery/actions/app-context-action
-      - run: .backpack/delivery/test-backpack.sh
+      - run: .backpack/delivery/actions/test-backpack.sh
 
-  # Build and test frontend JS and CSS assets
-  frontend_build:
+  build_frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -28,34 +26,31 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - uses: ./.backpack/delivery/actions/app-context-action
       - run: yarn install
-      - run: yarn run build
+      - run: .backpack/delivery/actions/test-frontend.sh
       - uses: actions/upload-artifact@v1
         with:
-          name: frontend-assets
+          name: frontend-artifact
           path: build
 
-  # Build and test backend python
-  server_build:
+  build_server:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main'
     steps:
       - uses: actions/checkout@v1
       - uses: ./.backpack/delivery/actions/app-context-action
       - run: docker-compose build
-      - run: docker-compose run "$BACKPACK_DOCKER_SERVICE_NAME" .backpack/delivery/test-server.sh
+      - run: docker-compose run "$BACKPACK_DOCKER_SERVICE_NAME" .backpack/delivery/actions/test-server.sh
 
-  # Build and publish docker artifact
-  release_build:
+  release:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: frontend_build
+    needs: build_frontend
     steps:
       - uses: actions/checkout@v1
       - uses: actions/download-artifact@v1
         with:
-          name: frontend-assets
+          name: frontend-artifact
           path: build
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -63,7 +58,13 @@ jobs:
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
       - uses: ./.backpack/delivery/actions/app-context-action
-      - run: .backpack/delivery/install-berglas.sh
-      - run: .backpack/delivery/build-release.sh
+      - run: .backpack/delivery/actions/install-ansible.sh
+      - run: .backpack/delivery/actions/install-berglas.sh
+      - run: .backpack/delivery/actions/install-terraform.sh
+      - run: .backpack/delivery/actions/deploy-release.sh
         env:
+          DIGITALOCEAN_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_PRIVATE_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
