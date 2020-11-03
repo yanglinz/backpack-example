@@ -19,6 +19,6 @@
         src: "{{ playbook_dir }}/../../../app-artifact.tar.gz"
         dest: /tmp/app-artifact.tar.gz
     - name: Run Deployment Script
-      script: "{{ playbook_dir }}/../dokku-deploy.sh"
+      script: "{{ playbook_dir }}/dokku-deploy.sh"
       environment:
         APP_NAME: "{{ lookup('env', 'APP_NAME') }}"
