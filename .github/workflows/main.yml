@@ -39,8 +39,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: ./.backpack/delivery/actions/app-context-action
-      - run: docker-compose build
-      - run: docker-compose run "$BACKPACK_DOCKER_SERVICE_NAME" .backpack/delivery/actions/test-server.sh
+      # - run: docker-compose build
+      # - run: docker-compose run "$BACKPACK_DOCKER_SERVICE_NAME" .backpack/delivery/actions/test-server.sh
 
   release:
     runs-on: ubuntu-latest
