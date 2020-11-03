@@ -44,7 +44,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref != 'refs/heads/main'
     needs: build_frontend
     steps:
       - uses: actions/checkout@v1
@@ -57,8 +57,9 @@ jobs:
           version: "290.0.1"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
-      - uses: ./.backpack/delivery/actions/app-context-action
       - run: .backpack/delivery/actions/install-berglas.sh
+      - run: .backpack/delivery/actions/install-terraform.sh
+      - uses: ./.backpack/delivery/actions/app-context-action
       - run: .backpack/delivery/actions/build-release.sh
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
