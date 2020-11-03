@@ -2,7 +2,6 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-RELEASE_BRANCH="main"
 SOURCE_IMAGE="source-image"
 DOCKER_REGISTRY="gcr.io/${GCP_PROJECT_ID}/${APP_NAME}"
 RELEASE_TAG="$(. "$(dirname "$0")/hash-files.sh")"
@@ -57,9 +56,7 @@ function generate_vm_artifact() {
 
 debug_info
 
-if [[ "$GITHUB_REF" != "refs/heads/${RELEASE_BRANCH}" ]]; then
-  echo "Not on ${RELEASE_BRANCH} branch. Nothing to publish."
-elif [[ "$RUNTIME_PLATFORM" == "CLOUD_RUN" ]]; then
+if [[ "$RUNTIME_PLATFORM" == "CLOUD_RUN" ]]; then
   echo "Building release artifact for CLOUD_RUN"
   build_release
   publish_gcp_registry
@@ -71,5 +68,5 @@ elif [[ "$RUNTIME_PLATFORM" == "VM" ]]; then
   echo "Building release artifact for VM"
   generate_vm_artifact
 else
-  echo "Not on GCP or Heroku. Nothing to publish."
+  echo "Nothing to publish for ${RUNTIME_PLATFORM}"
 fi
