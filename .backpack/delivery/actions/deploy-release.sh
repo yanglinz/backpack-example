@@ -54,6 +54,33 @@ function generate_vm_artifact() {
   mv /tmp/app-artifact.tar.gz .
 }
 
+function publish_vm_artifact() {
+  # echo "$GCP_SERVICE_ACCOUNT_KEY" | base64 --decode > /tmp/service-account.json
+  # export GCLOUD_KEYFILE_JSON="/tmp/service-account.json"
+
+  cd terraform
+  terraform init -backend-config="token=${TERRAFORM_CLOUD_TOKEN}"
+  terraform plan -var="digitalocean_token=${DIGITALOCEAN_TOKEN}"
+  # terraform apply -var="digitalocean_token=${DIGITALOCEAN_TOKEN}" -auto-approve
+  terraform output -json > /tmp/terraform-output.json
+  cd -
+
+  local instance_ip=$(cat /tmp/terraform-output.json | jq -r '.ip_address.value')
+
+  # Setup ansible hosts inventory
+  mkdir -p ~/.ssh
+  mkdir -p ./etc/ansible
+  ssh-keyscan -H "$instance_ip" >> ~/.ssh/known_hosts
+  echo "$instance_ip" > ./etc/ansible/hosts
+
+  # Setup SSH key pair
+  mkdir -p ~/.ssh
+  echo "$DIGITALOCEAN_PRIVATE_KEY" > ~/.ssh/id_rsa
+  sudo chmod 600 ~/.ssh/id_rsa
+  ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+  sudo chmod 600 ~/.ssh/id_rsa.pub
+}
+
 debug_info
 
 if [[ "$RUNTIME_PLATFORM" == "CLOUD_RUN" ]]; then
@@ -67,6 +94,7 @@ elif [[ "$RUNTIME_PLATFORM" == "HEROKU" ]]; then
 elif [[ "$RUNTIME_PLATFORM" == "VM" ]]; then
   echo "Building release artifact for VM"
   generate_vm_artifact
+  publish_vm_artifact
 else
   echo "Nothing to publish for ${RUNTIME_PLATFORM}"
 fi

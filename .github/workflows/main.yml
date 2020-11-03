@@ -27,7 +27,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - run: yarn install
-      - run: yarn run build
+      - run: .backpack/delivery/actions/test-frontend.sh
       - uses: actions/upload-artifact@v1
         with:
           name: frontend-artifact
@@ -57,9 +57,10 @@ jobs:
           version: "290.0.1"
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
+      - uses: ./.backpack/delivery/actions/app-context-action
+      - run: .backpack/delivery/actions/install-ansible.sh
       - run: .backpack/delivery/actions/install-berglas.sh
       - run: .backpack/delivery/actions/install-terraform.sh
-      - uses: ./.backpack/delivery/actions/app-context-action
-      - run: .backpack/delivery/actions/build-release.sh
+      - run: .backpack/delivery/actions/deploy-release.sh
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
