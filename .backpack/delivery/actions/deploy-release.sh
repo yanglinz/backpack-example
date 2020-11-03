@@ -45,7 +45,6 @@ function publish_deploy_heroku() {
 function generate_do_artifact() {
   # Create env vars
   mkdir -p var/env
-  ./backpack vars get --env=production
   ./backpack vars get --env=production > /dev/null 2>&1
   ./backpack vars get --env=production > var/env/production.json
 
@@ -78,7 +77,7 @@ function publish_do_artifact() {
   sudo chmod 600 ~/.ssh/id_rsa.pub
 
   # Publish artifact
-  ansible-playbook .backpack/digitalocean/playbooks/deploy.yml \
+  ansible-playbook .backpack/delivery/playbooks/deploy.yml \
     --inventory ./etc/ansible/hosts \
     --user root
 }
