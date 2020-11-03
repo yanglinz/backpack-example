@@ -42,7 +42,7 @@ function publish_deploy_heroku() {
   heroku container:release worker -a "$HEROKU_APP_NAME"
 }
 
-function generate_vm_artifact() {
+function generate_do_artifact() {
   # Create env vars
   mkdir -p var/env
   ./backpack vars get --env=production
@@ -54,7 +54,7 @@ function generate_vm_artifact() {
   mv /tmp/app-artifact.tar.gz .
 }
 
-function publish_vm_artifact() {
+function publish_do_artifact() {
   # echo "$GCP_SERVICE_ACCOUNT_KEY" | base64 --decode > /tmp/service-account.json
   # export GCLOUD_KEYFILE_JSON="/tmp/service-account.json"
 
@@ -91,10 +91,10 @@ elif [[ "$RUNTIME_PLATFORM" == "HEROKU" ]]; then
   echo "Building release artifact for HEROKU"
   build_release
   publish_deploy_heroku
-elif [[ "$RUNTIME_PLATFORM" == "VM" ]]; then
-  echo "Building release artifact for VM"
-  generate_vm_artifact
-  publish_vm_artifact
+elif [[ "$RUNTIME_PLATFORM" == "DIGITAL_OCEAN" ]]; then
+  echo "Building release artifact for DIGITAL_OCEAN"
+  generate_do_artifact
+  publish_do_artifact
 else
   echo "Nothing to publish for ${RUNTIME_PLATFORM}"
 fi
