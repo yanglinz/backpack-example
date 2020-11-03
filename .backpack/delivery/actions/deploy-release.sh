@@ -78,9 +78,9 @@ function publish_do_artifact() {
   sudo chmod 600 ~/.ssh/id_rsa.pub
 
   # Publish artifact
-  # ansible-playbook .backpack/digitalocean/playbooks/setup.yml \
-  #   --inventory ./etc/ansible/hosts \
-  #   --user root
+  ansible-playbook .backpack/digitalocean/playbooks/deploy.yml \
+    --inventory ./etc/ansible/hosts \
+    --user root
 }
 
 debug_info
