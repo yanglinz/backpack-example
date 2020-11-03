@@ -55,13 +55,10 @@ function generate_do_artifact() {
 }
 
 function publish_do_artifact() {
-  # echo "$GCP_SERVICE_ACCOUNT_KEY" | base64 --decode > /tmp/service-account.json
-  # export GCLOUD_KEYFILE_JSON="/tmp/service-account.json"
-
+  # Make sure resources are applied
   cd terraform
   terraform init -backend-config="token=${TERRAFORM_CLOUD_TOKEN}"
-  terraform plan -var="digitalocean_token=${DIGITALOCEAN_TOKEN}"
-  # terraform apply -var="digitalocean_token=${DIGITALOCEAN_TOKEN}" -auto-approve
+  terraform plan -var="digitalocean_token=${DIGITALOCEAN_TOKEN}" -detailed-exitcode
   terraform output -json > /tmp/terraform-output.json
   cd -
 
@@ -79,6 +76,8 @@ function publish_do_artifact() {
   sudo chmod 600 ~/.ssh/id_rsa
   ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
   sudo chmod 600 ~/.ssh/id_rsa.pub
+
+  # Publish artifact
 }
 
 debug_info
