@@ -10,7 +10,7 @@ services:
       dockerfile: .backpack/docker/python-dev.Dockerfile
     command: bash -c ".backpack/runtime/entry-dev.sh"
     environment:
-    - DJANGO_SETTINGS_MODULE=projects.example.settings
+    - DJANGO_SETTINGS_MODULE=projects.core.settings
     - BACKPACK_DOCKER_COMPOSE=true
     ports:
     - 8000:8000

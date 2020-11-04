@@ -6,4 +6,4 @@ runtime: DIGITAL_OCEAN
 
 projects:
   - name: example
-    path: projects/example
+    path: projects/core
